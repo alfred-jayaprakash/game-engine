@@ -10,7 +10,7 @@ import {
   Input,
   Alert,
 } from 'reactstrap';
-import {withRouter} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import GameEngine from '../utils/GameEngine';
 
 const JoinScreen = props => {
@@ -33,14 +33,13 @@ const JoinScreen = props => {
       }
 
       //Now connect to the game server
-      let failed = false;
-      GameEngine.join (user, room, error => {
+      GameEngine.join (user, room, (error, data) => {
         if (error) {
           setError (error);
-          failed = true;
+        } else {
+          history.push ('/game');
         }
       });
-      if (!failed) history.push ('/wait');
     }
   };
 
@@ -82,6 +81,7 @@ const JoinScreen = props => {
             <Button color="primary" onClick={onSubmit}>
               {roomValidated ? 'Join' : 'Next'}
             </Button>
+            <Link to="/admin">Admin click herenp </Link>
           </Form>
         </Col>
       </Row>

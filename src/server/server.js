@@ -15,20 +15,12 @@ const {generateMessage} = require ('./utils/messages');
 const app = express ();
 app.use (express.static (path.join (__dirname, '../../build')));
 app.get ('/', function (req, res) {
-  res.sendFile (path.join (__dirname, 'build', 'index.html'));
+  res.sendFile (path.join (__dirname, '../../build', 'index.html'));
 });
 
 const server = http.createServer (app);
 
 const io = socketIo (server); // < Interesting!
-
-const getApiAndEmit = socket => {
-  const response = new Date ();
-  // Emitting a new message. Will be consumed by the client
-  socket.emit ('FromAPI', response);
-};
-
-let interval;
 
 io.on ('connection', socket => {
   //Connect handler
@@ -37,30 +29,43 @@ io.on ('connection', socket => {
   //Game join handler
   socket.on ('join', (options, callback) => {
     const {error, user} = addUser ({id: socket.id, ...options});
+
     if (error) {
-      return callback (error);
+      //If error, return straightaway
+      return callback (error, null);
     }
 
-    socket.join (user.room);
-
-    socket.emit ('message', generateMessage ('System', 'welcome'));
-    socket.broadcast
-      .to (user.room)
-      .emit (
-        'message',
-        generateMessage ('System', `${user.username} has joined!`)
-      );
-    io.to (user.room).emit ('roomData', {
-      room: user.room,
-      users: getUsersInRoom (user.room),
+    broadcast (socket, user).then (() => {
+      //Tell others that the user has joined
+      console.log (user.username, 'joined the game', user.room);
     });
+
+    return callback (null, getUsersInRoom (user.room)); //All's well
   });
 
   //Disconnect handler
   socket.on ('disconnect', () => {
-    console.log ('Client disconnected');
-    //clearInterval (interval);
+    const user = removeUser (socket.id);
+    if (user) {
+      io.to (user.room).emit ('user_leave', user.username); //Tell everyone user has left
+      io.to (user.room).emit ('room_data', {
+        room: user.room,
+        users: getUsersInRoom (user.room),
+      }); //Send the updated user list
+    }
   });
 });
+
+async function broadcast (socket, user) {
+  socket.join (user.room);
+
+  socket.emit ('message', generateMessage ('System', 'welcome'));
+  socket.broadcast.to (user.room).emit ('user_join', user.username); //Tell everyone that the user has joined
+  io.to (user.room).emit ('room_data', {
+    //Send updated user list
+    room: user.room,
+    users: getUsersInRoom (user.room),
+  });
+}
 
 server.listen (port, () => console.log (`Listening on port ${port}`));
