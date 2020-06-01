@@ -56,15 +56,23 @@ io.on ('connection', socket => {
   });
 });
 
-async function broadcast (socket, user) {
-  socket.join (user.room);
+//
+// Broadcast join events to rooms asynchronously
+//
+function broadcast (socket, user) {
+  return new Promise ((resolve, reject) => {
+    setTimeout (() => {
+      socket.join (user.room);
 
-  socket.emit ('message', generateMessage ('System', 'welcome'));
-  socket.broadcast.to (user.room).emit ('user_join', user.username); //Tell everyone that the user has joined
-  io.to (user.room).emit ('room_data', {
-    //Send updated user list
-    room: user.room,
-    users: getUsersInRoom (user.room),
+      socket.emit ('message', generateMessage ('System', 'welcome'));
+      socket.broadcast.to (user.room).emit ('user_join', user.username); //Tell everyone that the user has joined
+      io.to (user.room).emit ('room_data', {
+        //Send updated user list
+        room: user.room,
+        users: getUsersInRoom (user.room),
+      });
+      resolve ();
+    }, 0);
   });
 }
 

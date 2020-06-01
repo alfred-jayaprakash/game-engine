@@ -1,7 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import {Container, Row, Col, Spinner, Alert} from 'reactstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Spinner,
+  Alert,
+  Button,
+  Table,
+  Toast,
+  ToastHeader,
+  ToastBody,
+} from 'reactstrap';
 import GameEngine from '../utils/GameEngine';
-import GameUser from '../components/GameUser';
 
 let initialized = false;
 
@@ -34,23 +44,43 @@ const AdminScreen = props => {
     <Container>
       {error !== '' &&
         <Row>
-          <Col className="col-12">
+          <Col>
             <Alert color="danger">{error}</Alert>
           </Col>
         </Row>}
-      <Row className="row h-100 justify-content-center align-items-center">
-        <Col className="col-2">
-          <Spinner color="primary" />
-        </Col>
-        <Col className="col-10">
-          Waiting for other players to join ...
-        </Col>
-      </Row>
-      <Row className="row h-100 justify-content-center align-items-center">
+      <Row>
         <Col>
-          {users.map (user => <GameUser user={user.username} />)}
+          <Button color="success">Start Game</Button>
+          {'  '}
+          <Button color="danger">End Game</Button>
         </Col>
       </Row>
+      <Row>
+        <Col>
+          {'  '}
+        </Col>
+      </Row>
+      <Row className="row h-100">
+        <Col>
+          <Toast className="mb-2">
+            <ToastHeader icon={<Spinner size="sm" />}>
+              Waiting for other players to join ...
+            </ToastHeader>
+            <ToastBody>
+              <Table size="sm">
+                <tbody>
+                  {users.map (user => (
+                    <tr>
+                      <td>{user.username}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </ToastBody>
+          </Toast>
+        </Col>
+      </Row>
+
     </Container>
   );
 };

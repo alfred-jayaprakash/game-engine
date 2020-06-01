@@ -1,17 +1,24 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {Container, Row, Col, Spinner} from 'reactstrap';
 import GameEngine from '../utils/GameEngine';
-import GameUser from '../components/GameUser';
+
+let initialized = false;
 
 const GameScreen = props => {
+  // eslint-disable-next-line
   const [users, setUsers] = useState ([]);
 
-  useEffect (() => {
+  if (!initialized) {
     GameEngine.connect ();
     GameEngine.registerForRoomNotifications (data => {
-      if (data && data.users) setUsers (data.users);
+      if (data && data.users) {
+        setUsers (data.users);
+      }
     });
-  });
+
+    GameEngine.registerForGameStart (data => {});
+    initialized = true;
+  }
 
   return (
     <Container>
@@ -20,12 +27,7 @@ const GameScreen = props => {
           <Spinner color="primary" />
         </Col>
         <Col className="col-10">
-          Waiting for other players to join ...
-        </Col>
-      </Row>
-      <Row className="row h-100 justify-content-center align-items-center">
-        <Col>
-          {users.forEach (user => <GameUser user={user} />)}
+          Waiting for game to begin ...
         </Col>
       </Row>
     </Container>

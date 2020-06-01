@@ -2,7 +2,6 @@ import io from 'socket.io-client';
 const ENDPOINT = 'http://localhost:3001/';
 
 let socket = null;
-let users = [];
 
 var GameEngine = (function () {
   return {
@@ -15,21 +14,23 @@ var GameEngine = (function () {
       if (socket == null) this.connect ();
       console.log ('join', username, room);
       socket.emit ('join', {username, room}, (error, data) => {
-        if (data) users = data;
         callback (error, data);
       });
     },
     registerForRoomNotifications: function (callback) {
-      console.log ('registerForRoomNotifications1 was called');
       socket.on ('room_data', data => {
         console.log ('Received room data from server', data);
-        users = data;
+        callback (data);
+      });
+    },
+    registerForGameStart: function (callback) {
+      socket.on ('game_start', data => {
+        console.log ('Received game data from server', data);
         callback (data);
       });
     },
     disconnect: function () {
-      console.log ('Disconnected');
-      //Do some cleanup
+      //Console.log('')
     },
   };
 }) ();

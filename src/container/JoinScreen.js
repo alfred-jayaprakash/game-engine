@@ -80,8 +80,8 @@ const JoinScreen = props => {
               </FormGroup>}
             <Button color="primary" onClick={onSubmit}>
               {roomValidated ? 'Join' : 'Next'}
-            </Button>
-            <Link to="/admin">Admin click herenp </Link>
+            </Button>{'  '}
+            <Link to="/admin">Admin click here</Link>
           </Form>
         </Col>
       </Row>
