@@ -1,9 +1,9 @@
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render, getByText} from '@testing-library/react';
 import App from './App';
 
-test ('renders learn react link', () => {
-  const {getByText} = render (<App />);
-  const linkElement = getByText (/Join/i);
-  expect (linkElement).toBeInTheDocument ();
+test ('Join Screen is rendered by default', () => {
+  const {getByLabelText} = render (<App />);
+  const gameRoomLabel = getByLabelText (/Enter Game Room/i);
+  expect (gameRoomLabel).toBeInTheDocument ();
 });
