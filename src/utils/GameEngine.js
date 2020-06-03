@@ -21,13 +21,11 @@ var GameEngine = (function () {
     },
     registerForRoomNotifications: function (callback) {
       socket.on ('room_data', data => {
-        console.log ('Received room data from server', data);
         callback (data);
       });
     },
     registerForGameStart: function (callback) {
       socket.on ('game_start', data => {
-        console.log ('Received game data from server', data);
         callback (data);
       });
     },
