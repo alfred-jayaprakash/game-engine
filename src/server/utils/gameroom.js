@@ -59,7 +59,6 @@ const getUsersInRoom = room_id => {
 //
 //
 const addUser = ({id, username, room}) => {
-  console.log ('Trying to add user with', id, username, room);
   if (!username) return {};
 
   if (username.length > 20) {
@@ -76,7 +75,6 @@ const addUser = ({id, username, room}) => {
 
   // Check for existing user
   const existingUser = my_room.users.find (user => {
-    console.log ('>>>>', user.username, username);
     return user.username.toLowerCase () === username.toLowerCase ();
   });
 
