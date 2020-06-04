@@ -16,7 +16,10 @@ const createRoom = roomname => {
     users: [],
   };
   rooms.set (room_id, room);
-  return room;
+  return {
+    id: room_id,
+    roomname,
+  };
 };
 
 //
@@ -56,17 +59,15 @@ const getUsersInRoom = room_id => {
 //
 //
 const addUser = ({id, username, room}) => {
+  console.log ('Trying to add user with', id, username, room);
   if (!username) return {};
+
+  if (username.length > 20) {
+    return {error: 'Username cannot be longer than 20 chars'};
+  }
 
   // Clean the data
   username = username.trim ();
-
-  // Validate the data
-  if (!username || !room) {
-    return {
-      error: 'Username and room are required!',
-    };
-  }
 
   let my_room = getRoom (room);
   if (!my_room) {
@@ -75,7 +76,8 @@ const addUser = ({id, username, room}) => {
 
   // Check for existing user
   const existingUser = my_room.users.find (user => {
-    return user.username.lowercase === username.lowercase;
+    console.log ('>>>>', user.username, username);
+    return user.username.toLowerCase () === username.toLowerCase ();
   });
 
   // Validate username
@@ -121,7 +123,7 @@ const removeUserFromRoom = (username, room_id) => {
   }
 
   const index = room.users.findIndex (
-    user => user.username.lowercase === username.lowercase
+    user => user.username.toLowerCase () === username.toLowerCase ()
   );
   if (index !== -1) {
     const user = room.users.splice (index, 1)[0];

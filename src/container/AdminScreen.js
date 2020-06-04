@@ -11,34 +11,28 @@ import {
   ToastHeader,
   ToastBody,
 } from 'reactstrap';
+import AdminUserScreen from './AdminUserScreen';
 import GameEngine from '../utils/GameEngine';
 
 let initialized = false;
 
 const AdminScreen = props => {
-  const [users, setUsers] = useState ([]);
+  const [room, setRoom] = useState ('');
   const [error, setError] = useState ('');
 
   if (!initialized) {
-    GameEngine.join ('admin', '232323', (error, data) => {
-      if (error) {
-        return setError (error);
-      }
-      setUsers (data);
-    });
-    GameEngine.registerForRoomNotifications (data => {
-      console.log ('Received data in AdminScreen', data);
-      if (data && data.users) {
-        console.log ('Received non empty user list');
-        setUsers (data.users);
-      }
-    });
+    GameEngine.connect ();
     initialized = true;
   }
 
-  useEffect (() => {
-    //Do nothing for now
-  });
+  const onCreateRoom = () => {
+    GameEngine.createRoom ('New Game', (error, data) => {
+      if (error) {
+        return setError (error);
+      }
+      setRoom (data);
+    });
+  };
 
   return (
     <Container>
@@ -50,37 +44,15 @@ const AdminScreen = props => {
         </Row>}
       <Row>
         <Col>
-          <Button color="success">Start Game</Button>
-          {'  '}
-          <Button color="danger">End Game</Button>
+          <Button color="success" onClick={onCreateRoom}>Create Room</Button>
         </Col>
       </Row>
-      <Row>
-        <Col>
-          {'  '}
-        </Col>
-      </Row>
-      <Row className="row h-100">
-        <Col>
-          <Toast className="mb-2">
-            <ToastHeader icon={<Spinner size="sm" />}>
-              Waiting for other players to join ...
-            </ToastHeader>
-            <ToastBody>
-              <Table size="sm">
-                <tbody>
-                  {users.map (user => (
-                    <tr>
-                      <td>{user.username}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </ToastBody>
-          </Toast>
-        </Col>
-      </Row>
-
+      {room &&
+        <Row>
+          <Col>
+            <AdminUserScreen room={room.id} error={error => setError (error)} />
+          </Col>
+        </Row>}
     </Container>
   );
 };

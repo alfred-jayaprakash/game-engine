@@ -26,6 +26,12 @@ const JoinScreen = props => {
       if (room === '') {
         return setError ('Room ID cannot be empty');
       }
+      if (room.length != 6) {
+        return setError ('Invalid room number');
+      }
+      if (isNaN (room)) {
+        return setError ('Invalid room number');
+      }
       setValidated (true); //Let's assume it is validated now
     } else {
       if (user === '') {
@@ -33,7 +39,8 @@ const JoinScreen = props => {
       }
 
       //Now connect to the game server
-      GameEngine.join (user, room, (error, data) => {
+      GameEngine.connect ();
+      GameEngine.join (user, parseInt (room), (error, data) => {
         if (error) {
           setError (error);
         } else {

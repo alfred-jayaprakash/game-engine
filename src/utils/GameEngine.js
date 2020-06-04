@@ -11,6 +11,11 @@ var GameEngine = (function () {
         //Nothing for now
       });
     },
+    createRoom: function (room, callback) {
+      socket.emit ('create_room', {room}, (error, data) => {
+        callback (error, data);
+      });
+    },
     join: function (username, room, callback) {
       socket.emit ('join', {username, room}, (error, data) => {
         callback (error, data);
