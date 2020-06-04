@@ -6,15 +6,12 @@ let socket = null;
 var GameEngine = (function () {
   return {
     connect: function () {
-      console.log ('Connect');
       socket = io (ENDPOINT);
       socket.on ('disconnect', () => {
-        this.disconnect ();
+        //Nothing for now
       });
     },
     join: function (username, room, callback) {
-      if (socket === null) this.connect ();
-      console.log ('join', username, room);
       socket.emit ('join', {username, room}, (error, data) => {
         callback (error, data);
       });
@@ -30,7 +27,7 @@ var GameEngine = (function () {
       });
     },
     disconnect: function () {
-      socket = null;
+      //socket = null;
     },
   };
 }) ();
