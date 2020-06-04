@@ -1,4 +1,4 @@
-const users = require ('./users');
+const gameroom = require ('./gameroom');
 
 //
 // Connect handler: Handle client connect events
@@ -20,7 +20,7 @@ const handleNewConnection = (io, socket) => {
 // Join handler: Handle join events
 //
 const handleJoin = (options, callback, socket, io) => {
-  const {error, user} = users.addUser ({id: socket.id, ...options});
+  const {error, user} = gameroom.addUser ({id: socket.id, ...options});
 
   if (error) {
     //If error, return straightaway
@@ -32,7 +32,7 @@ const handleJoin = (options, callback, socket, io) => {
     console.log (user.username, 'joined the game', user.room);
   });
 
-  return callback (null, users.getUsersInRoom (user.room)); //All's well
+  return callback (null, gameroom.getUsersInRoom (user.room)); //All's well
 };
 
 //
@@ -48,7 +48,7 @@ const broadcast = (io, socket, user) => {
       io.to (user.room).to (user.room).emit ('room_data', {
         //Send updated user list
         room: user.room,
-        users: users.getUsersInRoom (user.room),
+        users: gameroom.getUsersInRoom (user.room),
       });
       resolve ();
     }, 0);
@@ -59,12 +59,12 @@ const broadcast = (io, socket, user) => {
 // Disconnect handler: Handle disconnect events
 //
 const handleDisconnect = (socket, io) => {
-  const user = users.removeUser (socket.id);
+  const user = gameroom.removeUser (socket.id);
   if (user) {
     io.to (user.room).emit ('user_leave', user.username); //Tell everyone user has left
     io.to (user.room).emit ('room_data', {
       room: user.room,
-      users: users.getUsersInRoom (user.room),
+      users: gameroom.getUsersInRoom (user.room),
     }); //Send the updated user list
   }
 };

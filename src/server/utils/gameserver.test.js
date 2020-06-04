@@ -15,13 +15,13 @@ test ('Handle new connection should register socket message', () => {
   expect (socket.on.mock.calls[1][0]).toBe ('disconnect');
 });
 
-// tell jest not to mock users
-jest.unmock ('./users');
+// tell jest not to mock gameroom
+jest.unmock ('./gameroom');
 
 // require the actual module so that we can mock exports on the module
-const users = require.requireActual ('./users');
+const gameroom = require.requireActual ('./gameroom');
 
-test ('Disconnection should result in broadcast to all users', () => {
+test ('Disconnection should result in broadcast to all users in the room', () => {
   //
   // Test data
   //
@@ -37,10 +37,10 @@ test ('Disconnection should result in broadcast to all users', () => {
   //
 
   // User mocks
-  users.removeUser = jest.fn (id => {
+  gameroom.removeUser = jest.fn (id => {
     return userData;
   });
-  users.getUsersInRoom = jest.fn (room => usersInRoomData);
+  gameroom.getUsersInRoom = jest.fn (room => usersInRoomData);
 
   // Socket.IO mocks
   let io = new Object ();
@@ -59,13 +59,13 @@ test ('Disconnection should result in broadcast to all users', () => {
   // Verify Results
   //
   //removeUser should should be called once exactly
-  expect (users.removeUser.mock.calls.length).toBe (1);
+  expect (gameroom.removeUser.mock.calls.length).toBe (1);
 
   // removeUser should be called with the socket id of the user disconnected
-  expect (users.removeUser.mock.calls[0][0]).toBe (socketId);
+  expect (gameroom.removeUser.mock.calls[0][0]).toBe (socketId);
 
   // getUserInRoom should be called with the room of the user disconnected
-  expect (users.getUsersInRoom.mock.calls[0][0]).toBe (userData.room);
+  expect (gameroom.getUsersInRoom.mock.calls[0][0]).toBe (userData.room);
 
   // io.to should be called with correct room
   expect (io.to.mock.calls.length).toBe (2);
