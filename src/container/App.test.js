@@ -1,9 +1,11 @@
 import React from 'react';
-import {render, getByText} from '@testing-library/react';
+import {shallow} from 'enzyme';
 import App from './App';
 
-test ('Join Screen is rendered by default', () => {
-  const {getByLabelText} = render (<App />);
-  const gameRoomLabel = getByLabelText (/Enter Game Room/i);
-  expect (gameRoomLabel).toBeInTheDocument ();
+describe ('App', () => {
+  it ('should render correctly without issues', () => {
+    const component = shallow (<App />);
+
+    expect (component).toMatchSnapshot ();
+  });
 });

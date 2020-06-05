@@ -18,12 +18,12 @@
   },
   "scripts": {
     "server": "node ./src/server/server.js",
-    "dev": "nodemon ./src/server/server.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "jest": "jest --watch --runInBand ./src/server",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "concurrently \"node ./src/server/server.js\" \"npm start\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -46,9 +46,11 @@
     ]
   },
   "devDependencies": {
+    "concurrently": "^5.2.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
     "enzyme-to-json": "^3.5.0",
     "nodemon": "^2.0.4"
-  }
+  },
+  "proxy": "http://localhost:3001"
 }

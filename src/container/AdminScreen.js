@@ -21,29 +21,31 @@ const AdminScreen = props => {
   const [error, setError] = useState ('');
 
   const onCreateRoom = e => {
-    axios.post ('/rooms', {room: 'New Room'}).then (res => {
-      if (res.data) {
-        setRoom (res.data);
-      }
-    });
+    axios
+      .post ('http://localhost:3000/rooms', {room: 'New Room'})
+      .then (res => {
+        if (res.data) {
+          setRoom (res.data);
+        }
+      });
   };
 
   return (
-    <Container>
+    <Container className="mb-5">
       {error !== '' &&
         <Row>
-          <Col>
+          <Col sm="12" md={{size: 6, offset: 3}}>
             <Alert color="danger">{error}</Alert>
           </Col>
         </Row>}
       <Row>
-        <Col>
+        <Col sm="12" md={{size: 6, offset: 3}}>
           <Button color="success" onClick={onCreateRoom}>Create Room</Button>
         </Col>
       </Row>
       {room &&
         <Row>
-          <Col>
+          <Col sm="12" md={{size: 6, offset: 3}}>
             <AdminUserScreen room={room.id} error={error => setError (error)} />
           </Col>
         </Row>}

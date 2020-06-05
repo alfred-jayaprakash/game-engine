@@ -45,19 +45,14 @@ const AdminUserScreen = props => {
   return (
     <Container>
       <Row>
-        <Col>
+        <Col sm="12" md={{size: 6, offset: 3}}>
           <Button color="success">Start Game</Button>
           {'  '}
           <Button color="danger">End Game</Button>
         </Col>
       </Row>
       <Row>
-        <Col>
-          {'  '}
-        </Col>
-      </Row>
-      <Row className="row h-100">
-        <Col>
+        <Col sm="12" md={{size: 6, offset: 3}}>
           <Toast className="mb-2">
             <ToastHeader icon={<Spinner size="sm" />}>
               Waiting for other players to join ...

@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly without issues 1`] = `
+<Container
+  className="container h-100"
+  tag="div"
+>
+  <Row
+    className="row h-100 justify-content-center align-items-center"
+    tag="div"
+    widths={
+      Array [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+      ]
+    }
+  >
+    <Col
+      className="col-12"
+      tag="div"
+      widths={
+        Array [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "xl",
+        ]
+      }
+    >
+      <Form
+        tag="form"
+      >
+        <FormGroup
+          tag="div"
+        >
+          <Label
+            for="gameRoom"
+            tag="label"
+            widths={
+              Array [
+                "xs",
+                "sm",
+                "md",
+                "lg",
+                "xl",
+              ]
+            }
+          >
+            Enter Game Room
+          </Label>
+          <Input
+            disabled={false}
+            id="gameRoom"
+            name="gameRoom"
+            onChange={[Function]}
+            placeholder="Game Room ID"
+            type="text"
+          />
+        </FormGroup>
+        <Button
+          color="primary"
+          onClick={[Function]}
+          tag="button"
+        >
+          Next
+        </Button>
+          
+        <Link
+          to="/admin"
+        >
+          Admin click here
+        </Link>
+      </Form>
+    </Col>
+  </Row>
+</Container>
+`;
