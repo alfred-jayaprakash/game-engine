@@ -12,12 +12,6 @@ const handleNewConnection = (io, socket) => {
     handleJoin (options, callback, socket, io)
   );
 
-  //Setup Create Room handler
-  socket.on ('create_room', ({room}, callback) => {
-    let roomdata = gameroom.createRoom (room);
-    return callback (null, roomdata);
-  });
-
   //Setup Disconnect handler
   socket.on ('disconnect', () => handleDisconnect (socket, io));
 };

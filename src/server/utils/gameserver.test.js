@@ -6,16 +6,13 @@ test ('Handle new connection should register socket message', () => {
   socket.on = jest.fn ();
   handleNewConnection (io, socket);
   //Exactly once it should be called
-  expect (socket.on.mock.calls.length).toBe (3);
+  expect (socket.on.mock.calls.length).toBe (2);
 
   // The first argument of the first call to the function was join
   expect (socket.on.mock.calls[0][0]).toBe ('join');
 
-  // The first argument of the second call to the function was create_room
-  expect (socket.on.mock.calls[1][0]).toBe ('create_room');
-
   // The first argument of the third call to the function was disconnect
-  expect (socket.on.mock.calls[2][0]).toBe ('disconnect');
+  expect (socket.on.mock.calls[1][0]).toBe ('disconnect');
 });
 
 // tell jest not to mock gameroom

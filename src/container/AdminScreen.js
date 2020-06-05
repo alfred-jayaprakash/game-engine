@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import axios from 'axios';
 import {
   Container,
   Row,
@@ -12,7 +13,6 @@ import {
   ToastBody,
 } from 'reactstrap';
 import AdminUserScreen from './AdminUserScreen';
-import GameEngine from '../utils/GameEngine';
 
 let initialized = false;
 
@@ -20,17 +20,11 @@ const AdminScreen = props => {
   const [room, setRoom] = useState ('');
   const [error, setError] = useState ('');
 
-  if (!initialized) {
-    GameEngine.connect ();
-    initialized = true;
-  }
-
-  const onCreateRoom = () => {
-    GameEngine.createRoom ('New Game', (error, data) => {
-      if (error) {
-        return setError (error);
+  const onCreateRoom = e => {
+    axios.post ('/rooms', {room: 'New Room'}).then (res => {
+      if (res.data) {
+        setRoom (res.data);
       }
-      setRoom (data);
     });
   };
 

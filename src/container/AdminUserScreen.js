@@ -21,6 +21,7 @@ const AdminUserScreen = props => {
 
   if (!initialized) {
     console.log ('Trying to join room ', props.room);
+    GameEngine.connect ();
     GameEngine.join ('admin', props.room, (error, data) => {
       if (error) {
         console.log (error);
