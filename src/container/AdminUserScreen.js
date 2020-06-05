@@ -52,7 +52,7 @@ const AdminUserScreen = props => {
         </Col>
       </Row>
       <Row>
-        <Col sm="12" md={{size: 6, offset: 3}}>
+        <Col sm="12" md={{size: 9, offset: 3}}>
           <Toast className="mb-2">
             <ToastHeader icon={<Spinner size="sm" />}>
               Waiting for other players to join ...

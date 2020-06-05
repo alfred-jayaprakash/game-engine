@@ -15,19 +15,19 @@ import {
 import AdminUserScreen from './AdminUserScreen';
 
 let initialized = false;
+const SERVER_URL = process.env.REACT_APP_SERVER_URL || '/';
 
 const AdminScreen = props => {
   const [room, setRoom] = useState ('');
   const [error, setError] = useState ('');
 
   const onCreateRoom = e => {
-    axios
-      .post ('http://localhost:3000/rooms', {room: 'New Room'})
-      .then (res => {
-        if (res.data) {
-          setRoom (res.data);
-        }
-      });
+    console.log ('URL to connect is ', SERVER_URL);
+    axios.post (SERVER_URL + '/rooms', {room: 'New Room'}).then (res => {
+      if (res.data) {
+        setRoom (res.data);
+      }
+    });
   };
 
   return (
