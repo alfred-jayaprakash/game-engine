@@ -23,7 +23,7 @@
     "test": "react-scripts test",
     "jest": "jest --watch --runInBand ./src/server",
     "eject": "react-scripts eject",
-    "dev": "concurrently \"node ./src/server/server.js\" \"react-scripts start\""
+    "dev": "concurrently \"nodemon ./src/server/server.js\" \"react-scripts start\""
   },
   "eslintConfig": {
     "extends": "react-app"

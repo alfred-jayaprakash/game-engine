@@ -1,20 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
-import {
-  Container,
-  Row,
-  Col,
-  Spinner,
-  Alert,
-  Button,
-  Table,
-  Toast,
-  ToastHeader,
-  ToastBody,
-} from 'reactstrap';
+import {Container, Row, Col, Alert, Button} from 'reactstrap';
 import AdminUserScreen from './AdminUserScreen';
 
-let initialized = false;
 const SERVER_URL = process.env.REACT_APP_SERVER_URL || '/';
 
 const AdminScreen = props => {

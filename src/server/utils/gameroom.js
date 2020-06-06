@@ -131,6 +131,7 @@ const removeUserFromRoom = (username, room_id) => {
 };
 
 module.exports = {
+  getRoom,
   getAllRooms,
   createRoom,
   removeRoom,

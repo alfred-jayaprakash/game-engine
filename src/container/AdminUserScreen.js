@@ -4,7 +4,6 @@ import {
   Row,
   Col,
   Spinner,
-  Alert,
   Button,
   Table,
   Toast,
@@ -17,7 +16,6 @@ let initialized = false;
 
 const AdminUserScreen = props => {
   const [users, setUsers] = useState ([]);
-  const [error, setError] = useState ('');
 
   if (!initialized) {
     console.log ('Trying to join room ', props.room);

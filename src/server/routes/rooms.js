@@ -13,7 +13,17 @@ router.get ('/', (req, res) => {
   res.status (200).send (roomList);
 });
 
-// define the default route
+// Get room by room id
+router.get ('/:roomId', (req, res) => {
+  let roomData = gameroom.getRoom (parseInt (req.params.roomId));
+  if (roomData) {
+    res.status (200).send ({data: roomData});
+  } else {
+    res.status (200).send ({error: 'Room not found'});
+  }
+});
+
+// define the create room route
 router.post ('/', (req, res) => {
   console.log (
     'Request created to start a new game with room name: ',
