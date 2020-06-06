@@ -31,21 +31,22 @@ const AdminScreen = props => {
   };
 
   return (
-    <Container className="mb-5">
+    <Container className="centered-form">
       {error !== '' &&
         <Row>
-          <Col sm="12" md={{size: 6, offset: 3}}>
+          <Col>
             <Alert color="danger">{error}</Alert>
           </Col>
         </Row>}
-      <Row>
-        <Col sm="12" md={{size: 6, offset: 3}}>
-          <Button color="success" onClick={onCreateRoom}>Create Room</Button>
-        </Col>
-      </Row>
+      {room === '' &&
+        <Row>
+          <Col>
+            <Button color="success" onClick={onCreateRoom}>Create Room</Button>
+          </Col>
+        </Row>}
       {room &&
         <Row>
-          <Col sm="12" md={{size: 6, offset: 3}}>
+          <Col>
             <AdminUserScreen room={room.id} error={error => setError (error)} />
           </Col>
         </Row>}

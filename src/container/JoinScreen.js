@@ -27,7 +27,9 @@ const JoinScreen = props => {
         return setError ('Room ID cannot be empty');
       }
       if (room.length != 6) {
-        return setError ('Invalid room number');
+        return setError (
+          'Invalid room number. Please enter a 6-digit room number'
+        );
       }
       if (isNaN (room)) {
         return setError ('Invalid room number');
@@ -51,17 +53,16 @@ const JoinScreen = props => {
   };
 
   return (
-    <Container className="container h-100">
-
+    <Container className="centered-form">
       {error !== '' &&
         <Row>
-          <Col className="col-12">
+          <Col>
             <Alert color="danger">{error}</Alert>
           </Col>
         </Row>}
 
-      <Row className="row h-100 justify-content-center align-items-center">
-        <Col className="col-12">
+      <Row className="centered.form__box">
+        <Col>
           <Form>
             <FormGroup>
               <Label for="gameRoom">Enter Game Room</Label>
@@ -87,8 +88,9 @@ const JoinScreen = props => {
               </FormGroup>}
             <Button color="primary" onClick={onSubmit}>
               {roomValidated ? 'Join' : 'Next'}
-            </Button>{'  '}
-            <Link to="/admin">Admin click here</Link>
+            </Button>
+            {'    '}
+            <Link to="/admin">Admins click here</Link>
           </Form>
         </Col>
       </Row>
