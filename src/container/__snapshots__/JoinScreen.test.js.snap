@@ -2,11 +2,11 @@
 
 exports[`should render correctly without issues 1`] = `
 <Container
-  className="container h-100"
+  className="centered-form border-primary"
   tag="div"
 >
   <Row
-    className="row h-100 justify-content-center align-items-center"
+    className="centered.form__box"
     tag="div"
     widths={
       Array [
@@ -19,7 +19,7 @@ exports[`should render correctly without issues 1`] = `
     }
   >
     <Col
-      className="col-12"
+      className="col-lg-12"
       tag="div"
       widths={
         Array [
@@ -68,11 +68,11 @@ exports[`should render correctly without issues 1`] = `
         >
           Next
         </Button>
-          
+            
         <Link
           to="/admin"
         >
-          Admin click here
+          Admins click here
         </Link>
       </Form>
     </Col>

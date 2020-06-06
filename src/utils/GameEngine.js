@@ -11,11 +11,6 @@ var GameEngine = (function () {
         //Nothing for now
       });
     },
-    createRoom: function (room, callback) {
-      socket.emit ('create_room', {room}, (error, data) => {
-        callback (error, data);
-      });
-    },
     join: function (username, room, callback) {
       socket.emit ('join', {username, room}, (error, data) => {
         callback (error, data);
@@ -26,8 +21,13 @@ var GameEngine = (function () {
         callback (data);
       });
     },
-    registerForGameStart: function (callback) {
-      socket.on ('game_start', data => {
+    sendGameStatus: function (gameData, callback) {
+      socket.emit ('game_status', gameData, data => {
+        callback (data);
+      });
+    },
+    registerForGameStatus: function (callback) {
+      socket.on ('game_status', data => {
         callback (data);
       });
     },

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {Container, Row, Col, Alert, Button} from 'reactstrap';
-import AdminUserScreen from './AdminUserScreen';
+import AdminGamePanel from '../components/AdminGamePanel';
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL || '/';
 
@@ -35,7 +35,11 @@ const AdminScreen = props => {
       {room &&
         <Row>
           <Col>
-            <AdminUserScreen room={room.id} error={error => setError (error)} />
+            <AdminGamePanel
+              room={room.id}
+              error={error => setError (error)}
+              server={SERVER_URL}
+            />
           </Col>
         </Row>}
     </Container>

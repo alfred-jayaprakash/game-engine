@@ -1,6 +1,7 @@
 var express = require ('express');
 var router = express.Router ();
 var gameroom = require ('../utils/gameroom');
+var gameserver = require ('../utils/gameserver');
 
 // define the default route
 router.get ('/', (req, res) => {

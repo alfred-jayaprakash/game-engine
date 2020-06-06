@@ -12,6 +12,11 @@ const handleNewConnection = (io, socket) => {
     handleJoin (options, callback, socket, io)
   );
 
+  //Setup Game status change handler
+  socket.on ('game_status', (data, callback) =>
+    handleGameStatus (data, callback, socket, io)
+  );
+
   //Setup Disconnect handler
   socket.on ('disconnect', () => handleDisconnect (socket, io));
 };
@@ -69,4 +74,28 @@ const handleDisconnect = (socket, io) => {
   }
 };
 
+//
+// Game Status handler: Handle game status change events
+//
+const handleGameStatus = (data, callback, socket, io) => {
+  const gameData = {
+    status: data.status,
+  };
+  io.to (data.room).emit ('game_status', gameData); //Tell everyone user has left
+};
+
+//
+// Handle start game
+//
+const startGame = room => {
+  const users = room.getUsersInRoom ();
+  users.forEach (user => {});
+  if (user) {
+    io.to (user.room).emit ('user_leave', user.username); //Tell everyone user has left
+    io.to (user.room).emit ('room_data', {
+      room: user.room,
+      users: gameroom.getUsersInRoom (user.room),
+    }); //Send the updated user list
+  }
+};
 module.exports = {handleNewConnection, handleDisconnect};

@@ -61,14 +61,14 @@ test ('registerForRoomNotifications should register callback function', () => {
   GameEngine.disconnect ();
 });
 
-test ('registerForGameStart should register callback function', () => {
+test ('registerForGameStatus should register callback function', () => {
   //Setup test data
   const callback = jest.fn ();
 
   GameEngine.connect ();
-  GameEngine.registerForGameStart (callback);
+  GameEngine.registerForGameStatus (callback);
   expect (mocksocket.on).toHaveBeenCalledTimes (2); //socket.on should be called twice until now
-  expect (mocksocket.on.mock.calls[1][0]).toEqual ('game_start'); //1st Arg: 'room_data' message
+  expect (mocksocket.on.mock.calls[1][0]).toEqual ('game_status'); //1st Arg: 'game_status' message
   expect (callback).toHaveBeenCalledTimes (1); //Callback should be called once
   expect (callback.mock.calls[0][0]).toEqual ('data'); //Data received from server should be sent back to callback
 

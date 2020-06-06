@@ -64,3 +64,9 @@ label {
   margin-bottom: 16px;
   width: 100%;
 }
+
+.test-panel {
+  background: whitesmoke;
+  border: 1px;
+  border-style: groove;
+}
