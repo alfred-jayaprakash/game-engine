@@ -33,9 +33,8 @@ const AdminGamePanel = props => {
       setUsers (data);
     });
     GameEngine.registerForRoomNotifications (data => {
-      console.log ('Received data in AdminScreen', data);
+      console.log ('Received updated roomdata in AdminScreen', data);
       if (data && data.users) {
-        console.log ('Received non empty user list');
         setUsers (data.users);
       }
     });

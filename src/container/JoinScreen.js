@@ -10,8 +10,7 @@ import {
   Input,
   Alert,
 } from 'reactstrap';
-import {Link} from 'react-router-dom';
-import GameEngine from '../utils/GameEngine';
+import {Link, useHistory} from 'react-router-dom';
 import axios from 'axios';
 const SERVER_URL = process.env.REACT_APP_SERVER_URL || '/';
 
@@ -20,7 +19,7 @@ const JoinScreen = props => {
   const [user, setUser] = useState ('');
   const [error, setError] = useState ('');
   const [roomValidated, setValidated] = useState (false);
-  const {history} = props;
+  let history = useHistory ();
 
   const onSubmit = () => {
     if (!roomValidated) {
@@ -50,14 +49,20 @@ const JoinScreen = props => {
       if (user === '') {
         return setError ('Username cannot be empty');
       }
-
-      //Now connect to the game server
-      GameEngine.connect ();
-      GameEngine.join (user, parseInt (room), (error, data) => {
-        if (error) {
-          setError (error);
-        } else {
-          history.push ('/game');
+      const url = SERVER_URL + '/rooms/' + room + '/user/' + user;
+      axios.get (url).then (res => {
+        if (res.data) {
+          if (res.data.error) {
+            return setError (res.data.error);
+          }
+          console.log ('Validation successful and pushing data ', user, room);
+          history.push ({
+            pathname: '/game',
+            state: {
+              user,
+              room,
+            },
+          });
         }
       });
     }

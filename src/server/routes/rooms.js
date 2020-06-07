@@ -35,4 +35,17 @@ router.post ('/', (req, res) => {
   res.status (200).send (roomdata);
 });
 
+// Get user by room id and username
+router.get ('/:roomId/user/:username', (req, res) => {
+  let exists = gameroom.isUserExists (
+    req.params.username,
+    parseInt (req.params.roomId)
+  );
+  if (exists) {
+    res.status (200).send ({error: 'Username already taken'});
+  } else {
+    res.status (200).send ({data: 'success'});
+  }
+});
+
 module.exports = router;

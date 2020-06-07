@@ -92,6 +92,22 @@ const addUser = ({id, username, room}) => {
 };
 
 //
+// Is it an existing user
+//
+const isUserExists = (username, room) => {
+  //Clean the data
+  username = username.trim ();
+  let my_room = getRoom (room);
+
+  //If user found in the room then return true
+  return (
+    my_room.users.findIndex (
+      user => user.username.toLowerCase () === username.toLowerCase ()
+    ) !== -1
+  );
+};
+
+//
 //
 //
 const removeUser = id => {
@@ -139,4 +155,5 @@ module.exports = {
   removeUser,
   removeUserFromRoom,
   getUsersInRoom,
+  isUserExists,
 };

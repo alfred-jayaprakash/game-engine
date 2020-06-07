@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Container, Row, Col, Spinner} from 'reactstrap';
+import {Container, Row, Col, Spinner, Alert} from 'reactstrap';
 import GameEngine from '../utils/GameEngine';
 import ControlPanel from '../components/ControlPanel';
 import StatusPanel from '../components/StatusPanel';
@@ -17,13 +17,28 @@ const GAME_START = 'start';
 const GAME_END = 'end';
 
 const GameScreen = props => {
-  // eslint-disable-next-line
   const [users, setUsers] = useState ([]);
+  const [error, setError] = useState ('');
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
 
+  //One-time initialization
   if (!initialized) {
+    //Following state values set by calling function in Join Screen
+    let user = props.location.state.user;
+    let room = props.location.state.room;
+
+    console.log ('Joining as ', user, 'to room =', room);
     GameEngine.connect ();
+    GameEngine.join (user, parseInt (room), (error, data) => {
+      if (error) {
+        setError (error);
+      } else {
+        setUsers (data);
+      }
+    });
+
     GameEngine.registerForRoomNotifications (data => {
+      console.log ('Received updated user list in GameScreen', data);
       if (data && data.users) {
         setUsers (data.users);
       }
@@ -40,6 +55,7 @@ const GameScreen = props => {
 
   return (
     <div>
+      {error !== '' && <Alert color="danger">{error}</Alert>}
       {gameStatus === WAITING_STATUS &&
         <Container className="centered-form border-primary">
           <Row className="centered.form__box">
