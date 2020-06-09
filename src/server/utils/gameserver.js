@@ -1,4 +1,10 @@
 const gameroom = require ('./gameroom');
+const gameengine = require ('./gameengine');
+
+const WAITING_STATUS = 'wait';
+const GAME_START = 'start';
+const GAME_PROGRESS = 'run';
+const GAME_END = 'end';
 
 //
 // Connect handler: Handle client connect events
@@ -64,7 +70,6 @@ const handleDisconnect = (socket, io) => {
   const user = gameroom.removeUser (socket.id);
   if (user) {
     console.log ('Received disconnect and broadcasting to everyone', user);
-    //io.to (user.room).emit ('user_leave', user.username); //Tell everyone user has left
     io.to (user.room).emit ('room_data', {
       room: user.room,
       users: gameroom.getUsersInRoom (user.room),
@@ -76,15 +81,23 @@ const handleDisconnect = (socket, io) => {
 // Game Status handler: Handle game status change events
 //
 const handleGameStatus = (data, callback, socket, io) => {
-  const gameData = {
-    status: data.status,
-  };
-  console.log (
-    'Received game status and broadcasting to everyone',
-    data.room,
-    gameData
-  );
-  io.to (data.room).emit ('game_status', gameData); //Send game status to everyone
+  let room = gameroom.getRoom (parseInt (data.room));
+  data.room = room; //Overwrite room data in to the data structure
+  if (room) {
+    let gameData = null;
+    switch (data.status) {
+      case GAME_START:
+        gameData = gameengine.handleGameStart (data);
+        break;
+      case GAME_PROGRESS:
+        gameData = gameengine.handleGameStart (data);
+        break;
+      default:
+        gameData = gameengine.handleGameEnd (data);
+        break;
+    }
+    io.to (data.room).emit ('game_status', gameData); //Send game status to everyone
+  }
 };
 
 module.exports = {handleNewConnection, handleDisconnect};
