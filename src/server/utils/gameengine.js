@@ -1,4 +1,8 @@
-const gamedata = [{url: ''}, {url: ''}, {url: ''}, {url: ''}, {url: ''}];
+const gameData = [
+  {ref: '1', url: '/images/image1.jpg'},
+  {ref: '2', url: '/images/image2.jpg'},
+  {ref: '3', url: '/images/image3.jpg'},
+];
 
 let gameConfig = {
   gametype: 1,
@@ -12,6 +16,10 @@ const handleGameStart = data => {
   return {
     status: data.status,
     config: gameConfig,
+    state: {
+      ref: gameData[0].ref,
+      data: gameData[0].url,
+    },
   };
 };
 

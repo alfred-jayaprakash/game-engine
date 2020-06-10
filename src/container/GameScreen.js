@@ -13,13 +13,16 @@ let initialized = false;
 
 const WAITING_STATUS = 'wait';
 const GAME_START = 'start';
+const GAME_PROGRESS = 'run';
 // eslint-disable-next-line
 const GAME_END = 'end';
 
 const GameScreen = props => {
+  // eslint-disable-next-line
   const [users, setUsers] = useState ([]);
   const [error, setError] = useState ('');
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
+  const [gameState, setGameState] = useState ('');
 
   //One-time initialization
   if (!initialized) {
@@ -48,10 +51,28 @@ const GameScreen = props => {
       console.log ('Received game status change in GameScreen', data);
       if (data && data.status) {
         setGameStatus (data.status);
+        console.log (data.state);
+        setGameState (data.state);
       }
     });
     initialized = true;
   }
+
+  const onAnswer = answer => {
+    console.log ('Received answer =', answer);
+    GameEngine.sendGameStatus (
+      {
+        room: props.room,
+        status: GAME_PROGRESS,
+        state: {
+          response: answer,
+        },
+      },
+      data => {
+        console.log ('Receive Game progress change response');
+      }
+    );
+  };
 
   return (
     <div>
@@ -67,7 +88,7 @@ const GameScreen = props => {
         </Container>}
 
       {gameStatus === GAME_START &&
-        <Container>
+        <Container className="centered-form border-primary">
           <Row className="centered.form__box">
             <Col>
               <StatusPanel />
@@ -80,17 +101,17 @@ const GameScreen = props => {
           </Row>
           <Row className="centered.form__box">
             <Col>
-              <GamePanel />
-            </Col>
-          </Row>
-          <Row className="centered.form__box">
-            <Col>
-              <ControlPanel />
+              <GamePanel image="/images/image1.jpg" onAnswer={onAnswer} />
             </Col>
           </Row>
           <Row className="centered.form__box">
             <Col>
               <MessagePanel />
+            </Col>
+          </Row>
+          <Row className="centered.form__box">
+            <Col>
+              <ControlPanel />
             </Col>
           </Row>
         </Container>}

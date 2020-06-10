@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {Card, CardImg, CardBody, Button, Input} from 'reactstrap';
 
 const GamePanel = props => {
   const [answer, setAnswer] = useState ('');
@@ -10,7 +11,7 @@ const GamePanel = props => {
     if (answer.length > 10) {
       return console.log ('Answer length greater than 20');
     }
-    props.answer (answer);
+    props.onAnswer (answer);
   };
 
   return (
@@ -19,10 +20,10 @@ const GamePanel = props => {
         <CardImg top width="100%" src="{props.image}" alt="Game Image" />
         <CardBody>
           <Input
-            type="email"
-            name="email"
-            id="exampleEmail"
-            placeholder="with a placeholder"
+            type="answer"
+            name="answer"
+            id="userAnswer"
+            placeholder="Type your word"
             onChange={e => setAnswer (e.target.value)}
           />
           <Button color="success" onClick={onSubmit}>Submit</Button>

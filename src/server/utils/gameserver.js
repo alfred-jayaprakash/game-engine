@@ -81,7 +81,9 @@ const handleDisconnect = (socket, io) => {
 // Game Status handler: Handle game status change events
 //
 const handleGameStatus = (data, callback, socket, io) => {
-  let room = gameroom.getRoom (parseInt (data.room));
+  console.log ('Received game status data ', data);
+  let roomId = data.room;
+  let room = gameroom.getRoom (parseInt (roomId));
   data.room = room; //Overwrite room data in to the data structure
   if (room) {
     let gameData = null;
@@ -90,13 +92,13 @@ const handleGameStatus = (data, callback, socket, io) => {
         gameData = gameengine.handleGameStart (data);
         break;
       case GAME_PROGRESS:
-        gameData = gameengine.handleGameStart (data);
+        gameData = gameengine.handleGameProgress (data);
         break;
       default:
         gameData = gameengine.handleGameEnd (data);
         break;
     }
-    io.to (data.room).emit ('game_status', gameData); //Send game status to everyone
+    io.to (roomId).emit ('game_status', gameData); //Send game status to everyone
   }
 };
 
