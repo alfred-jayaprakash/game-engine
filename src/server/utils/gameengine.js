@@ -13,6 +13,9 @@ let gameConfig = {
 // Handle game start
 //
 const handleGameStart = data => {
+  //Data object has important stuff to maintain game progress
+  let room = data.room;
+
   return {
     status: data.status,
     config: gameConfig,

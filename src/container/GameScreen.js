@@ -23,6 +23,7 @@ const GameScreen = props => {
   const [error, setError] = useState ('');
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
   const [gameState, setGameState] = useState ('');
+  const [answers, setAnswers] = useState ([]);
 
   //One-time initialization
   if (!initialized) {
@@ -60,6 +61,11 @@ const GameScreen = props => {
 
   const onAnswer = answer => {
     console.log ('Received answer =', answer);
+    if (answers.indexOf (answer) !== -1) {
+      return console.log ('Word already guessed');
+    }
+    answers.push (answer);
+    setAnswers (answers);
     GameEngine.sendGameStatus (
       {
         room: props.room,
@@ -89,27 +95,27 @@ const GameScreen = props => {
 
       {gameStatus === GAME_START &&
         <Container className="centered-form border-primary">
-          <Row className="centered.form__box">
+          <Row>
             <Col>
               <StatusPanel />
             </Col>
           </Row>
-          <Row className="centered.form__box">
+          <Row>
             <Col>
               <ScorePanel />
             </Col>
           </Row>
-          <Row className="centered.form__box">
+          <Row>
             <Col>
-              <GamePanel image="/images/image1.jpg" onAnswer={onAnswer} />
+              <GamePanel imgsrc="/images/image1.jpg" onAnswer={onAnswer} />
             </Col>
           </Row>
-          <Row className="centered.form__box">
+          <Row>
             <Col>
-              <MessagePanel />
+              <MessagePanel data={answers} />
             </Col>
           </Row>
-          <Row className="centered.form__box">
+          <Row>
             <Col>
               <ControlPanel />
             </Col>
