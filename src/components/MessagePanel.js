@@ -5,7 +5,11 @@ const MessagePanel = props => {
   return (
     <div className="centered-form__box">
       Some empty area to display your words
-      {console.log (props.data)}
+      <ListGroup>
+        {props.data.map (answer => (
+          <ListGroupItem key="{answer}">{answer}</ListGroupItem>
+        ))}
+      </ListGroup>
     </div>
   );
 };

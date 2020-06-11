@@ -85,7 +85,7 @@ const AdminGamePanel = props => {
               <Table>
                 <tbody>
                   {users.map (user => (
-                    <tr>
+                    <tr key="{user.id}">
                       <td>{user.username}</td>
                     </tr>
                   ))}

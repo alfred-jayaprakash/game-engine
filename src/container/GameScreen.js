@@ -5,9 +5,6 @@ import ControlPanel from '../components/ControlPanel';
 import StatusPanel from '../components/StatusPanel';
 import ScorePanel from '../components/ScorePanel';
 import GamePanel from '../components/GamePanel';
-// eslint-disable-next-line
-import UserPanel from '../components/UserPanel';
-import MessagePanel from '../components/MessagePanel';
 
 let initialized = false;
 
@@ -22,8 +19,8 @@ const GameScreen = props => {
   const [users, setUsers] = useState ([]);
   const [error, setError] = useState ('');
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
+  // eslint-disable-next-line
   const [gameState, setGameState] = useState ('');
-  const [answers, setAnswers] = useState ([]);
 
   //One-time initialization
   if (!initialized) {
@@ -61,11 +58,6 @@ const GameScreen = props => {
 
   const onAnswer = answer => {
     console.log ('Received answer =', answer);
-    if (answers.indexOf (answer) !== -1) {
-      return console.log ('Word already guessed');
-    }
-    answers.push (answer);
-    setAnswers (answers);
     GameEngine.sendGameStatus (
       {
         room: props.room,
@@ -98,25 +90,8 @@ const GameScreen = props => {
           <Row>
             <Col>
               <StatusPanel />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
               <ScorePanel />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
               <GamePanel imgsrc="/images/image1.jpg" onAnswer={onAnswer} />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <MessagePanel data={answers} />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
               <ControlPanel />
             </Col>
           </Row>
