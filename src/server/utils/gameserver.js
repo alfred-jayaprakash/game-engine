@@ -80,25 +80,51 @@ const handleDisconnect = (socket, io) => {
 //
 // Game Status handler: Handle game status change events
 //
-const handleGameStatus = (data, callback, socket, io) => {
-  console.log ('Received game status data ', data);
-  let roomId = data.room;
+const handleGameStatus = (game_state_data, callback, socket, io) => {
+  console.log ('Received game status data in gameserver.js', game_state_data);
+  let roomId = game_state_data.room;
   let room = gameroom.getRoom (parseInt (roomId));
-  data.room = room; //Overwrite room data in to the data structure
+  let current_user = room.users.find (user => user.id === socket.id);
+  game_state_data.room = room; //Overwrite room data in to the data structure
+  game_state_data.user = current_user; //Set the current user data
+  game_state_data.update_data = null;
+  game_state_data.update_users = null;
+
   if (room) {
-    let gameData = null;
-    switch (data.status) {
+    let game_engine_response = null;
+    switch (game_state_data.status) {
       case GAME_START:
-        gameData = gameengine.handleGameStart (data);
+        game_engine_response = gameengine.handleGameStart (game_state_data);
         break;
       case GAME_PROGRESS:
-        gameData = gameengine.handleGameProgress (data);
+        game_engine_response = gameengine.handleGameProgress (game_state_data);
         break;
       default:
-        gameData = gameengine.handleGameEnd (data);
+        game_engine_response = gameengine.handleGameEnd (game_state_data);
         break;
     }
-    io.to (roomId).emit ('game_status', gameData); //Send game status to everyone
+    //
+    // If there is any update data sent to specific set of users
+    //
+    if (game_state_data.update_users && game_state_data.update_data) {
+      game_state_data.update_users.forEach (user => {
+        io.to (user.id).emit ('state', game_state_data.data);
+      });
+    }
+
+    //
+    // Now copy the latest scores to update everyone
+    //
+    let scores = [];
+    room.users.forEach (user => {
+      scores.push ({
+        user: user.username,
+        score: user.score,
+      });
+    });
+    game_engine_response.scores = scores; //Set the current scores in the game engine response
+
+    io.to (roomId).emit ('game_status', game_engine_response); //Send update game status to everyone
   }
 };
 

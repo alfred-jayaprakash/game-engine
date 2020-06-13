@@ -47,6 +47,7 @@ test ('Add a new user to a room', () => {
     id: 3,
     username: 'John Doe',
     room: sampleRoomId,
+    score: 0,
   };
   const {user, error} = gameroom.addUser (tempUser);
   expect (error).toBeFalsy (); //Error should be empty
@@ -90,7 +91,12 @@ test ('Add a user with name longer than 20 characters', () => {
 test ('Remove user from room', () => {
   const user = gameroom.removeUser (3);
   expect (user).toBeTruthy (); //User should not be empty
-  expect (user).toEqual ({id: 3, username: 'John Doe', room: sampleRoomId});
+  expect (user).toEqual ({
+    id: 3,
+    username: 'John Doe',
+    score: 0,
+    room: sampleRoomId,
+  });
 });
 
 test ('Remove non-existent user from room', () => {

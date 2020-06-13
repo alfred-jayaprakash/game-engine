@@ -10,12 +10,40 @@ import {
   Form,
   FormGroup,
   Label,
+  ListGroup,
+  ListGroupItem,
+  Badge,
 } from 'reactstrap';
+import GameEngine from '../utils/GameEngine';
+
+let initialized = false;
 
 const GamePanel = props => {
   const [answer, setAnswer] = useState ('');
   // eslint-disable-next-line
   const [answers, setAnswers] = useState ([]);
+  // eslint-disable-next-line
+  const [userAnswers, setUserAnswers] = useState (new Map ());
+
+  //One-time initialization
+  if (!initialized) {
+    GameEngine.registerForGameStateUpdates (state_data => {
+      console.log ('Received game state change in GameScreen', state_data);
+      if (state_data) {
+        let state_data_answer = state_data.answer;
+        let users = state_data.users;
+        if (state_data_answer) {
+          let answerCount = userAnswers.get (state_data_answer);
+          //If no answer is found - This is not correct state
+          if (answerCount == null) {
+            userAnswers.set (state_data_answer, 1);
+          }
+          userAnswers.set (state_data_answer, users.length); //Preserve the users
+        }
+      }
+    });
+    initialized = true; //Done
+  }
 
   const onSubmit = e => {
     if (answer === '') {
@@ -30,6 +58,7 @@ const GamePanel = props => {
     }
 
     answers.push (answer);
+    userAnswers.set (answer, 1);
     props.onAnswer (answer);
     setAnswer ('');
   };
@@ -55,6 +84,7 @@ const GamePanel = props => {
                     name="answer"
                     id="userAnswer"
                     placeholder="Type your word"
+                    autoFocus={true}
                     onKeyDown={e => {
                       if (e.key === 'Enter') {
                         e.preventDefault ();
@@ -79,13 +109,15 @@ const GamePanel = props => {
           </Card>
         </Col>
       </Row>
-      <Row className="mw-100 mh-100 flex-wrap">
+      <Row>
         <Col>
-          {answers.map (answer => (
-            <Label className="border border-dark rounded bg-light text-dark p-3">
-              {answer}
-            </Label>
-          ))}
+          <ListGroup>
+            {userAnswers.forEach ((value, key) => (
+              <ListGroupItem className="bg-light text-dark p-2">
+                {key} <Badge color="secondary">{value.length - 1}</Badge>
+              </ListGroupItem>
+            ))}
+          </ListGroup>
         </Col>
       </Row>
     </div>

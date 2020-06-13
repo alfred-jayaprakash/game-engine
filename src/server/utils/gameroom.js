@@ -10,10 +10,14 @@ const createRoom = roomname => {
   while (rooms.get (room_id))
     room_id = genRoomId ();
 
+  //
+  // Room data structure
+  //
   let room = {
     id: room_id,
     roomname,
     users: [],
+    gamedata: new Map (),
   };
   rooms.set (room_id, room);
   return {
@@ -84,9 +88,9 @@ const addUser = ({id, username, room}) => {
       error: 'Username is in use!',
     };
   }
-
+  let score = 0;
   // Store user
-  const user = {id, username, room};
+  const user = {id, username, room, score};
   my_room.users.push (user);
   return {user};
 };
@@ -105,6 +109,14 @@ const isUserExists = (username, room) => {
       user => user.username.toLowerCase () === username.toLowerCase ()
     ) !== -1
   );
+};
+
+//
+// Get an user for the given room id and socket id
+//
+const getUser = (room_id, user_id) => {
+  let room = getRoom (room);
+  return room.users.find (user => user.id === id);
 };
 
 //

@@ -32,7 +32,7 @@ test ('handleGameProgress should return game progress data', () => {
       ],
     },
     status: 'run',
-    data: {},
+    state: {},
   });
   expect (progressData).toBeTruthy (); //progressData should not be null
 });

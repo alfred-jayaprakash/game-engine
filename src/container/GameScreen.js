@@ -75,7 +75,7 @@ const GameScreen = props => {
     console.log ('Received answer =', answer);
     GameEngine.sendGameStatus (
       {
-        room: props.room,
+        room: props.location.state.room,
         status: GAME_PROGRESS,
         state: {
           response: answer,
