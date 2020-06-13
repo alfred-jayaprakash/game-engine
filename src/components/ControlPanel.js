@@ -1,7 +1,8 @@
 import React from 'react';
+import {Row, Col} from 'reactstrap';
 
 const ControlPanel = props => {
-  return <div className="test-panel">Control Panel</div>;
+  return <Row className="text-light"><Col><h4>Control Panel</h4></Col></Row>;
 };
 
 export default ControlPanel;

@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Container,
   Row,
   Col,
   Card,
@@ -8,12 +7,14 @@ import {
   CardBody,
   Button,
   Input,
-  ListGroup,
-  ListGroupItem,
+  Form,
+  FormGroup,
+  Label,
 } from 'reactstrap';
 
 const GamePanel = props => {
   const [answer, setAnswer] = useState ('');
+  // eslint-disable-next-line
   const [answers, setAnswers] = useState ([]);
 
   const onSubmit = e => {
@@ -34,38 +35,59 @@ const GamePanel = props => {
   };
 
   return (
-    <div className="centered.form__box">
-      <Card>
-        <CardImg top width="100%" src={props.imgsrc} alt="Game Image" />
-        <CardBody>
-          <Container>
-            <Row>
-              <Col>
-                <Input
-                  type="answer"
-                  name="answer"
-                  id="userAnswer"
-                  placeholder="Type your word"
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault ();
-                      onSubmit (e);
-                    }
-                  }}
-                  onChange={e => setAnswer (e.target.value)}
-                  value={answer}
-                />
-                <Button color="success" onClick={onSubmit}>Submit</Button>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                {answers.map (answer => <Button key={answer}>{answer}</Button>)}
-              </Col>
-            </Row>
-          </Container>
-        </CardBody>
-      </Card>
+    <div>
+      <Row>
+        <Col>
+          <Card>
+            <CardImg
+              top
+              width="256"
+              height="256"
+              src={props.imgsrc}
+              alt="Game Image"
+            />
+            <CardBody>
+              <Form>
+                <FormGroup>
+                  <Input
+                    className="form-control form-control-lg"
+                    type="answer"
+                    name="answer"
+                    id="userAnswer"
+                    placeholder="Type your word"
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault ();
+                        onSubmit (e);
+                      }
+                    }}
+                    onChange={e => setAnswer (e.target.value)}
+                    value={answer}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Button
+                    color="info"
+                    className="btn-lg btn-block"
+                    onClick={onSubmit}
+                  >
+                    Submit
+                  </Button>
+                </FormGroup>
+              </Form>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          {answers.map (answer => (
+            <Label className="border border-dark rounded bg-light text-dark w-25 p-3">
+              {answer}
+            </Label>
+          ))}
+        </Col>
+      </Row>
     </div>
   );
 };

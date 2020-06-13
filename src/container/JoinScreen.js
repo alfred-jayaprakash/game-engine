@@ -6,7 +6,6 @@ import {
   Button,
   Form,
   FormGroup,
-  Label,
   Input,
   Alert,
 } from 'reactstrap';
@@ -69,14 +68,23 @@ const JoinScreen = props => {
   };
 
   return (
-    <Container className="centered-form border-primary">
-      <Row className="centered.form__box">
-        <Col className="col-lg-12">
-          {error !== '' && <Alert color="danger">{error}</Alert>}
-          <Form>
+    <Container
+      className="d-flex flex-column justify-content-center bg-dark text-white vertical-center"
+      fluid={true}
+    >
+      <Row>
+        <Col>
+          <h2>Game.Ninja</h2>
+        </Col>
+      </Row>
+      {error !== '' &&
+        <Row><Col><Alert color="danger">{error}</Alert></Col></Row>}
+      <Form>
+        <Row>
+          <Col>
             <FormGroup>
-              <Label for="gameRoom">Enter Game Room</Label>
               <Input
+                className="form-control form-control-lg"
                 type="text"
                 name="gameRoom"
                 id="gameRoom"
@@ -85,25 +93,42 @@ const JoinScreen = props => {
                 disabled={roomValidated}
               />
             </FormGroup>
-            {roomValidated &&
+          </Col>
+        </Row>
+        {roomValidated &&
+          <Row>
+            <Col>
               <FormGroup>
-                <Label for="gameRoom">Enter your name</Label>
                 <Input
+                  className="form-control form-control-lg"
                   type="text"
                   name="gameUser"
                   id="gameUser"
-                  placeholder="Your Screen Name"
+                  placeholder="Your Name"
                   onChange={e => setUser (e.target.value)}
                 />
-              </FormGroup>}
-            <Button color="primary" onClick={onSubmit}>
-              {roomValidated ? 'Join' : 'Next'}
-            </Button>
-            {'    '}
+              </FormGroup>
+            </Col>
+          </Row>}
+        <Row>
+          <Col>
+            <FormGroup>
+              <Button
+                color="info"
+                onClick={onSubmit}
+                className="btn-lg btn-block"
+              >
+                {roomValidated ? 'Join' : 'Next'}
+              </Button>
+            </FormGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
             <Link to="/admin">Admins click here</Link>
-          </Form>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+      </Form>
     </Container>
   );
 };

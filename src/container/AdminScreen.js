@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
-import {Container, Row, Col, Alert, Button} from 'reactstrap';
+import {Container, Row, Col, Alert, Button, Form, FormGroup} from 'reactstrap';
 import AdminGamePanel from '../components/AdminGamePanel';
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL || '/';
@@ -19,7 +19,10 @@ const AdminScreen = props => {
   };
 
   return (
-    <Container className="centered-form">
+    <Container
+      className="d-flex flex-column justify-content-center bg-dark text-white vertical-center"
+      fluid={true}
+    >
       {error !== '' &&
         <Row>
           <Col>
@@ -27,11 +30,21 @@ const AdminScreen = props => {
           </Col>
         </Row>}
       {room === '' &&
-        <Row>
-          <Col>
-            <Button color="success" onClick={onCreateRoom}>Create Room</Button>
-          </Col>
-        </Row>}
+        <Form>
+          <FormGroup>
+            <Row>
+              <Col>
+                <Button
+                  color="success"
+                  className="btn-lg btn-block"
+                  onClick={onCreateRoom}
+                >
+                  Create Room
+                </Button>
+              </Col>
+            </Row>
+          </FormGroup>
+        </Form>}
       {room &&
         <Row>
           <Col>

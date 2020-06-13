@@ -1,7 +1,8 @@
 import React from 'react';
+import {Row, Col} from 'reactstrap';
 
 const ScorePanel = props => {
-  return <div className="test-panel">Score Panel</div>;
+  return <Row><Col><h4>Score Panel</h4></Col></Row>;
 };
 
 export default ScorePanel;

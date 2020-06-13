@@ -1,7 +1,8 @@
 import React from 'react';
+import {Row, Col} from 'reactstrap';
 
 const StatusPanel = props => {
-  return <div className="test-panel">Status Panel</div>;
+  return <Row><Col><h4>Status Panel</h4></Col></Row>;
 };
 
 export default StatusPanel;

@@ -1,75 +1,7 @@
-/* General Styles */
+.vertical-center {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-}
-
-input {
-  font-size: 14px;
-}
-
-body {
-  line-height: 1.4;
-  color: #333333;
-  font-family: Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-.center_div{
-  margin: 0 auto;
-  width:100% /* value of your choice which suits your alignment */
-}
-
-label {
-  display: block;
-  font-size: 16px;
-  margin-bottom: 8px;
-  color: #F7F7FA;
-}
-
-/* Join Page Styles */
-.default-form {
-  background: #333744;
-}
-
-.centered-form {
-  background: #333744;
-  width: 100vw;
-  height: 100vh;   
   display: flex;
-  justify-content: center;
   align-items: center;
-}
-
-.centered-form__box {
-  box-shadow: 0px 0px 17px 1px #1D1F26;
-  background: #F7F7FA;
-  padding: 10px;
-}
-
-.centered-form button {
-  width: 100%;
-}
-
-.centered-form input {
-  margin-bottom: 16px;
-  width: 100%;
-}
-
-.test-panel {
-  background: whitesmoke;
-  border: 1px;
-  border-style: groove;
 }

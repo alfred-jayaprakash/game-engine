@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Container,
   Row,
   Col,
   Spinner,
@@ -60,16 +59,30 @@ const AdminGamePanel = props => {
   };
 
   return (
-    <Container>
+    <div>
       <Row>
         <Col>
-          <h2>Game Room ID: {props.room}</h2>
+          <h4 className="text-light">Join Game ID: {props.room}</h4>
         </Col>
       </Row>
       <Row>
         <Col>
-          <Button color="success" onClick={handleStart}>Start Game</Button>
-          <Button color="danger" onClick={handleEnd}>End Game</Button>
+          {gameStatus === WAITING_STATUS &&
+            <Button
+              color="success"
+              className="btn-lg btn-block"
+              onClick={handleStart}
+            >
+              Start Game
+            </Button>}
+          {gameStatus === GAME_START &&
+            <Button
+              color="danger"
+              className="btn-lg btn-block"
+              onClick={handleEnd}
+            >
+              End Game
+            </Button>}
         </Col>
       </Row>
       <Row>
@@ -95,8 +108,7 @@ const AdminGamePanel = props => {
           </Toast>
         </Col>
       </Row>
-
-    </Container>
+    </div>
   );
 };
 

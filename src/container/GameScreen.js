@@ -1,5 +1,15 @@
 import React, {useState} from 'react';
-import {Container, Row, Col, Spinner, Alert} from 'reactstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Spinner,
+  Alert,
+  Label,
+  Toast,
+  ToastHeader,
+  ToastBody,
+} from 'reactstrap';
 import GameEngine from '../utils/GameEngine';
 import ControlPanel from '../components/ControlPanel';
 import StatusPanel from '../components/StatusPanel';
@@ -73,30 +83,37 @@ const GameScreen = props => {
   };
 
   return (
-    <div>
-      {error !== '' && <Alert color="danger">{error}</Alert>}
+    <Container
+      className="d-flex flex-column justify-content-center bg-dark text-light vertical-center"
+      fluid={true}
+    >
+      {error !== '' &&
+        <Row><Col><Alert color="danger">{error}</Alert></Col></Row>}
       {gameStatus === WAITING_STATUS &&
-        <Container className="centered-form border-primary">
-          <Row className="centered.form__box">
-            <Col>
-              <Spinner color="primary" />
-              Waiting for game to begin ...
-            </Col>
-          </Row>
-        </Container>}
+        <Row>
+          <Col>
+            <Toast>
+              <ToastHeader
+                className="text-primary"
+                icon={<Spinner size="sm" />}
+              >
+                Waiting ...
+              </ToastHeader>
+              <ToastBody className="text-dark">
+                Please wait for other players to join
+              </ToastBody>
+            </Toast>
+          </Col>
+        </Row>}
 
       {gameStatus === GAME_START &&
-        <Container className="centered-form border-primary">
-          <Row>
-            <Col>
-              <StatusPanel />
-              <ScorePanel />
-              <GamePanel imgsrc="/images/image1.jpg" onAnswer={onAnswer} />
-              <ControlPanel />
-            </Col>
-          </Row>
-        </Container>}
-    </div>
+        <div>
+          <StatusPanel />
+          <ScorePanel />
+          <GamePanel imgsrc="/images/image1.jpg" onAnswer={onAnswer} />
+          <ControlPanel />
+        </div>}
+    </Container>
   );
 };
 
