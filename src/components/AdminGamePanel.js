@@ -81,7 +81,7 @@ const AdminGamePanel = props => {
               className="btn-lg btn-block"
               onClick={handleEnd}
             >
-              End Game
+              Stop Game
             </Button>}
         </Col>
       </Row>

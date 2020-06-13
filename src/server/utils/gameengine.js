@@ -22,10 +22,7 @@ const handleGameStart = data => {
   return {
     status: data.status,
     config: gameConfig,
-    state: {
-      ref: gameMetaData[0].ref,
-      data: gameMetaData[0].url,
-    },
+    state: gameMetaData,
   };
 };
 

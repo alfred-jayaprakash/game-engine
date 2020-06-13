@@ -6,7 +6,6 @@ import {
   Col,
   Spinner,
   Alert,
-  Label,
   Toast,
   ToastHeader,
   ToastBody,
@@ -31,7 +30,9 @@ const GameScreen = props => {
   const [error, setError] = useState ('');
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
   // eslint-disable-next-line
-  const [gameState, setGameState] = useState ('');
+  const [gameState, setGameState] = useState ([]);
+  // eslint-disable-next-line
+  const [score, setScore] = useState (0);
   const history = useHistory ();
 
   //One-time initialization
@@ -62,10 +63,15 @@ const GameScreen = props => {
 
     GameEngine.registerForGameStatus (data => {
       console.log ('Received game status change in GameScreen', data);
-      if (data && data.status) {
-        setGameStatus (data.status);
-        console.log (data.state);
-        setGameState (data.state);
+      if (data) {
+        if (data.status) setGameStatus (data.status);
+        if (data.state) setGameState (data.state);
+        if (data.scores) {
+          let userScoreData = data.scores.find (
+            user => user.user === props.location.state.user
+          ); //Find my own score
+          setScore (userScoreData.score); //And set it
+        }
       }
     });
     initialized = true;
@@ -115,7 +121,7 @@ const GameScreen = props => {
       {gameStatus === GAME_START &&
         <div>
           <StatusPanel />
-          <ScorePanel />
+          <ScorePanel score={score} />
           <GamePanel imgsrc="/images/image1.jpg" onAnswer={onAnswer} />
           <ControlPanel />
         </div>}
