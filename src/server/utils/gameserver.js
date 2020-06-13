@@ -107,8 +107,9 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
     // If there is any update data sent to specific set of users
     //
     if (game_state_data.update_users && game_state_data.update_data) {
-      game_state_data.update_users.forEach (user => {
-        io.to (user.id).emit ('state', game_state_data.data);
+      console.log ('Found users to be updated ', game_state_data.update_users);
+      game_state_data.update_users.forEach (socketId => {
+        io.to (socketId).emit ('state', game_state_data.update_data);
       });
     }
 
@@ -124,6 +125,10 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
     });
     game_engine_response.scores = scores; //Set the current scores in the game engine response
 
+    console.log (
+      'Game status response to be broadcasted to everyone ',
+      game_engine_response
+    );
     io.to (roomId).emit ('game_status', game_engine_response); //Send update game status to everyone
   }
 };

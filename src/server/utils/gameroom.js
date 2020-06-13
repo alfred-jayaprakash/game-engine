@@ -17,7 +17,6 @@ const createRoom = roomname => {
     id: room_id,
     roomname,
     users: [],
-    gamedata: new Map (),
   };
   rooms.set (room_id, room);
   return {

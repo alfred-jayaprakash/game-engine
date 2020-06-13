@@ -78,6 +78,7 @@ const GameScreen = props => {
         room: props.location.state.room,
         status: GAME_PROGRESS,
         state: {
+          ref: 1,
           response: answer,
         },
       },
