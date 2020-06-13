@@ -18,7 +18,7 @@ const JoinScreen = props => {
   const [user, setUser] = useState ('');
   const [error, setError] = useState ('');
   const [roomValidated, setValidated] = useState (false);
-  let history = useHistory ();
+  const history = useHistory ();
 
   const onSubmit = () => {
     if (!roomValidated) {

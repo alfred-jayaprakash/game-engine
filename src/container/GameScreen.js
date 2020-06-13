@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useHistory} from 'react-router-dom';
 import {
   Container,
   Row,
@@ -31,6 +32,7 @@ const GameScreen = props => {
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
   // eslint-disable-next-line
   const [gameState, setGameState] = useState ('');
+  const history = useHistory ();
 
   //One-time initialization
   if (!initialized) {
@@ -42,7 +44,10 @@ const GameScreen = props => {
     GameEngine.connect ();
     GameEngine.join (user, parseInt (room), (error, data) => {
       if (error) {
-        setError (error);
+        setError (error + '. Redirecting in 3 secs ...');
+        setTimeout (() => {
+          history.push ('/');
+        }, 3000);
       } else {
         setUsers (data);
       }
@@ -84,7 +89,7 @@ const GameScreen = props => {
 
   return (
     <Container
-      className="d-flex flex-column justify-content-center bg-dark text-light vertical-center"
+      className="flex-column justify-content-center bg-dark text-light vertical-center"
       fluid={true}
     >
       {error !== '' &&

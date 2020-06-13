@@ -79,10 +79,10 @@ const GamePanel = props => {
           </Card>
         </Col>
       </Row>
-      <Row>
+      <Row className="mw-100 mh-100 flex-wrap">
         <Col>
           {answers.map (answer => (
-            <Label className="border border-dark rounded bg-light text-dark w-25 p-3">
+            <Label className="border border-dark rounded bg-light text-dark p-3">
               {answer}
             </Label>
           ))}
