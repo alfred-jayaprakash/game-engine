@@ -58,13 +58,13 @@ const handleGameProgress = game_state_data => {
     /**
      * Now lets get the answers data for the corresponding questions
      */
-    let answered_users = ref_ans_data.get (answer);
+    let answered_users = ref_ans_data.get (answer.toLowerCase ());
     let users_to_update_state = [];
     if (answered_users == null) {
       console.log ('No data for answer yet = ', answer);
       answered_users = [];
       answered_users.push (current_user.username); //Add the username to the list of answered users
-      ref_ans_data.set (answer, answered_users); //Set this data in reference ans data
+      ref_ans_data.set (answer.toLowerCase (), answered_users); //Set this data in reference ans data
       users_to_update_state.push (current_user.id); //Users who should receive the new state
     } else {
       //Answers was already answered
@@ -87,7 +87,7 @@ const handleGameProgress = game_state_data => {
     }
     //Update the answer to be sent along with the users that got same answer
     game_state_data.update_data = {
-      answer,
+      answer: answer.toLowerCase (),
       users: answered_users,
     };
 

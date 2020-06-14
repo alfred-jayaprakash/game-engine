@@ -24,11 +24,13 @@ const GamePanel = props => {
 
   useEffect (
     () => {
+      console.log ('Clearing in useEffect of GamePanel');
       //Clear all the user answers
       setAnswers ([]);
       setCurrentAnswer ('');
       return () => {
         //Clear all the user answers
+        console.log ('Clearing in useEffect cleanup of GamePanel');
         setAnswers ([]);
         setCurrentAnswer ('');
       };
@@ -36,26 +38,34 @@ const GamePanel = props => {
     [currentImage]
   );
 
-  //One-time initialization
-  if (!initialized) {
+  const register = () => {
+    //One-time initialization
     GameEngine.registerForGameStateUpdates (state_data => {
-      console.log ('Received game state change in GamePanel', state_data);
+      console.log (
+        'Received game state change with hits in GamePanel',
+        state_data,
+        answers
+      );
       if (state_data) {
         let state_data_answer = state_data.answer;
         let users = state_data.users;
         if (state_data_answer) {
           let idx = answers.findIndex (
-            value => value.answer === state_data_answer
+            value =>
+              value.answer.toLowerCase () === state_data_answer.toLowerCase ()
           );
-          if (idx !== -1)
-            answers[idx].set ({answer: state_data_answer, count: users.length}); //Preserve the new count
+          if (idx !== -1) {
+            answers[idx].count = users.length; //Preserve the new count
+          }
         }
       }
     });
     initialized = true; //Done
-  }
+  };
 
   const onSubmit = e => {
+    if (!initialized) register ();
+
     if (currentAnswer === '') {
       return console.log ('Answer cannot be empty');
     }
@@ -63,12 +73,16 @@ const GamePanel = props => {
       return console.log ('Answer length greater than 20');
     }
 
-    if (answers.findIndex (value => currentAnswer === value.answer) !== -1) {
+    if (
+      answers.findIndex (
+        value => currentAnswer.toLowerCase () === value.answer.toLowerCase ()
+      ) !== -1
+    ) {
       return console.log ('Word already guessed');
     }
 
-    answers.push ({answer: currentAnswer, count: 1});
-    props.onAnswer (currentAnswer);
+    answers.push ({answer: currentAnswer.toLowerCase (), count: 1});
+    props.onAnswer (currentAnswer.toLowerCase ());
     setCurrentAnswer ('');
   };
 

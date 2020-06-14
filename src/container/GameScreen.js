@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {
   Container,
@@ -12,7 +12,6 @@ import {
   Table,
 } from 'reactstrap';
 import GameEngine from '../utils/GameEngine';
-import ControlPanel from '../components/ControlPanel';
 import TimerPanel from '../components/TimerPanel';
 import ScorePanel from '../components/ScorePanel';
 import GamePanel from '../components/GamePanel';
@@ -114,6 +113,7 @@ const GameScreen = props => {
   // Timer complete
   //
   const onTimeOver = () => {
+    setCounter (counter + 1); //Increment the state counter
     console.log ('Timer has ended. Resetting time', counter);
     if (counter + 1 < gameMetaData.length) {
       let newMetaData = gameMetaData[counter + 1];
@@ -132,7 +132,6 @@ const GameScreen = props => {
         }
       );
     }
-    setCounter (counter + 1); //Increment the state counter
   };
 
   return (
@@ -181,14 +180,14 @@ const GameScreen = props => {
               Your final score is {score}
             </ToastHeader>
             <ToastBody>
-              {' '}             <Table>
+              <Table>
                 <tbody>
                   {gameScores.map (({user, score}) => (
-                    <tr key="{user.id}">
+                    <tr key={user}>
                       <td>{user}</td>
                       <td>{score}</td>
                     </tr>
-                  ))}  {' '}
+                  ))}
                 </tbody>
               </Table>
             </ToastBody>

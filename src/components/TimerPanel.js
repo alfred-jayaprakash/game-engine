@@ -33,7 +33,7 @@ const TimerPanel = props => {
         clearInterval (timer);
       };
     },
-    [duration, currentRef, onTimeOver]
+    [currentRef]
   );
 
   return (

@@ -118,10 +118,12 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
     //
     let scores = [];
     room.users.forEach (user => {
-      scores.push ({
-        user: user.username,
-        score: user.score,
-      });
+      if (user.username !== 'Game Admin') {
+        scores.push ({
+          user: user.username,
+          score: user.score,
+        });
+      }
     });
     game_engine_response.scores = scores; //Set the current scores in the game engine response
 
