@@ -53,7 +53,7 @@ const GamePanel = props => {
     if (answer === '') {
       return console.log ('Answer cannot be empty');
     }
-    if (answer.length > 10) {
+    if (answer.length > 20) {
       return console.log ('Answer length greater than 20');
     }
 
@@ -75,7 +75,7 @@ const GamePanel = props => {
               top
               width="256"
               height="256"
-              src={props.imgsrc}
+              src={props.currentImage}
               alt="Game Image"
             />
             <CardBody>
@@ -115,10 +115,9 @@ const GamePanel = props => {
       <Row>
         <Col>
           <ListGroup>
-            {userAnswers.forEach ((value, key) => (
+            {answers.Map (value => (
               <ListGroupItem className="bg-light text-dark p-2">
-                {key} <Badge color="secondary">{value.length - 1}</Badge>
-                {console.log ('Data printed', key)}
+                {value}
               </ListGroupItem>
             ))}
           </ListGroup>

@@ -3,8 +3,8 @@ import {Row, Col} from 'reactstrap';
 
 const ScorePanel = props => {
   return (
-    <Row className="text-dark bg-light">
-      <Col><h3>Score: {props.score}</h3></Col>
+    <Row>
+      <Col><h5 className="text-dark bg-light">Score: {props.score}</h5></Col>
     </Row>
   );
 };

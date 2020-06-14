@@ -2,8 +2,6 @@ const gameMetaData = [
   {ref: '1', url: '/images/image1.jpg'},
   {ref: '2', url: '/images/image2.jpg'},
   {ref: '3', url: '/images/image3.jpg'},
-  {ref: '4', url: '/images/image4.jpg'},
-  {ref: '5', url: '/images/image5.jpg'},
 ];
 
 let gameConfig = {
