@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
 import {
   Container,
@@ -9,6 +9,7 @@ import {
   Toast,
   ToastHeader,
   ToastBody,
+  Table,
 } from 'reactstrap';
 import GameEngine from '../utils/GameEngine';
 import ControlPanel from '../components/ControlPanel';
@@ -25,8 +26,6 @@ const GAME_PROGRESS = 'run';
 const GAME_END = 'end';
 
 const GameScreen = props => {
-  // eslint-disable-next-line
-  const [users, setUsers] = useState ([]);
   const [error, setError] = useState ('');
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
   const [duration, setDuration] = useState (30);
@@ -35,6 +34,7 @@ const GameScreen = props => {
   const [counter, setCounter] = useState (0);
   const [gameMetaData, setGameMetaData] = useState ([]);
   const [score, setScore] = useState (0);
+  const [gameScores, setGameScores] = useState ([]);
   const history = useHistory ();
 
   //One-time initialization
@@ -52,15 +52,15 @@ const GameScreen = props => {
           history.push ('/');
         }, 3000);
       } else {
-        setUsers (data);
+        //setUsers (data);
       }
     });
 
     GameEngine.registerForRoomNotifications (data => {
       console.log ('Received updated user list in GameScreen', data);
-      if (data && data.users) {
-        setUsers (data.users);
-      }
+      // if (data && data.users) {
+      //   setUsers (data.users);
+      // }
     });
 
     GameEngine.registerForGameStatus (data => {
@@ -83,6 +83,7 @@ const GameScreen = props => {
             user => user.user === props.location.state.user
           ); //Find my own score
           setScore (userScoreData.score); //And set it
+          setGameScores (data.scores);
         }
       }
     });
@@ -113,12 +114,12 @@ const GameScreen = props => {
   // Timer complete
   //
   const onTimeOver = () => {
-    console.log ('Timer has ended. Resetting time');
-    setCounter (counter + 1); //Increment the counter
-    if (counter < gameMetaData.length) {
-      //If there are more states to process
-      setCurrentRef (gameMetaData[counter].ref); //Set the contents to next data
-      setCurrentImage (gameMetaData[counter].url); //Set the contents to the next data
+    console.log ('Timer has ended. Resetting time', counter);
+    if (counter + 1 < gameMetaData.length) {
+      let newMetaData = gameMetaData[counter + 1];
+      console.log ('Resetting the data to new data: ', newMetaData);
+      setCurrentRef (newMetaData.ref); //Set the contents to next data
+      setCurrentImage (newMetaData.url); //Set the contents to the next data
     } else {
       setGameStatus (GAME_END);
       GameEngine.sendGameStatus (
@@ -131,6 +132,7 @@ const GameScreen = props => {
         }
       );
     }
+    setCounter (counter + 1); //Increment the state counter
   };
 
   return (
@@ -170,17 +172,25 @@ const GameScreen = props => {
             currentImage={currentImage}
             onAnswer={onAnswer}
           />
-          <ControlPanel />
         </div>}
 
       {gameStatus === GAME_END &&
         <div className="p-3 my-2 rounded bg-docs-transparent-grid text-dark">
           <Toast>
             <ToastHeader>
-              Game Ended
+              Your final score is {score}
             </ToastHeader>
             <ToastBody>
-              Your final score is {score}
+              {' '}             <Table>
+                <tbody>
+                  {gameScores.map (({user, score}) => (
+                    <tr key="{user.id}">
+                      <td>{user}</td>
+                      <td>{score}</td>
+                    </tr>
+                  ))}  {' '}
+                </tbody>
+              </Table>
             </ToastBody>
           </Toast>
         </div>}

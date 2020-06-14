@@ -20,6 +20,7 @@ const GAME_END = 'end';
 const AdminGamePanel = props => {
   const [users, setUsers] = useState ([]);
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
+  const [gameScores, setGameScores] = useState ([]);
 
   if (!initialized) {
     //setRoom (props.room);
@@ -42,6 +43,10 @@ const AdminGamePanel = props => {
       console.log ('Received game status change in AdminScreen', data);
       if (data && data.status) {
         setGameStatus (data.status);
+      }
+
+      if (data && data.scores) {
+        setGameScores (data.scores);
       }
     });
 
@@ -97,11 +102,20 @@ const AdminGamePanel = props => {
             <ToastBody>
               <Table>
                 <tbody>
-                  {users.map (user => (
-                    <tr key="{user.id}">
-                      <td>{user.username}</td>
-                    </tr>
-                  ))}
+                  {gameStatus === WAITING_STATUS &&
+                    users.map (user => (
+                      <tr key="{user.id}">
+                        <td>{user.username}</td>
+                      </tr>
+                    ))}
+
+                  {(gameStatus === GAME_START || gameStatus === GAME_END) &&
+                    gameScores.map (({user, score}) => (
+                      <tr key="{user.id}">
+                        <td>{user}</td>
+                        <td>{score}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </Table>
             </ToastBody>

@@ -12,7 +12,6 @@ const TimerPanel = props => {
 
   useEffect (
     () => {
-      console.log ('Received duration as ', duration);
       let currtime = parseInt (duration);
       setTimerStr (currtime + 's');
       //Create a timer
