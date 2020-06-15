@@ -32,7 +32,7 @@ const TimerPanel = props => {
         //Cancel the timer
         clearInterval (timer);
       };
-    },
+    }, // eslint-disable-next-line
     [currentRef]
   );
 
