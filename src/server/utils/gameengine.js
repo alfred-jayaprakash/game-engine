@@ -1,13 +1,16 @@
-const gameMetaData = [
-  {ref: '1', url: '/images/image1.jpg'},
-  {ref: '2', url: '/images/image2.jpg'},
-  {ref: '3', url: '/images/image3.jpg'},
-];
+const photoengine = require ('./photoengine');
 
-let gameConfig = {
-  gametype: 1,
-  time: 30,
-  questions: 3,
+//
+// Handle game initialization
+//
+const handleGameInit = async (room, config) => {
+  let photos = await photoengine.getPhotos (config.category, config.questions); //Get the list of photos from Photo Engine
+
+  let idx = 1;
+  let gameMetaData = photos.map (photo => ({url: photo, ref: idx++}));
+  console.log ('Initialized game meta data: ', gameMetaData);
+  room.gameMetaData = gameMetaData;
+  room.gameConfig = config;
 };
 
 //
@@ -16,11 +19,10 @@ let gameConfig = {
 const handleGameStart = data => {
   //Data object has important stuff to maintain game progress
   let room = data.room;
-
   return {
     status: data.status,
-    config: gameConfig,
-    state: gameMetaData,
+    config: room.gameConfig,
+    state: room.gameMetaData,
   };
 };
 
@@ -102,11 +104,11 @@ const handleGameProgress = game_state_data => {
 const handleGameEnd = data => {
   return {
     status: data.status,
-    config: gameConfig,
   };
 };
 
 module.exports = {
+  handleGameInit,
   handleGameStart,
   handleGameProgress,
   handleGameEnd,

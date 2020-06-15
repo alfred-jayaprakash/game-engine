@@ -63,7 +63,7 @@ const GameScreen = props => {
     });
 
     GameEngine.registerForGameStatus (data => {
-      console.log ('Received game status change in GameScreen', data);
+      console.log ('Received game status data in GameScreen', data);
       if (data) {
         if (data.status) setGameStatus (data.status);
         if (data.state) {

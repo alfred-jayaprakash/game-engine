@@ -84,6 +84,7 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
   console.log ('Received game status data in gameserver.js', game_state_data);
   let roomId = game_state_data.room;
   let room = gameroom.getRoom (parseInt (roomId));
+  if (room.users == null) return; //Invalid state
   let current_user = room.users.find (user => user.id === socket.id);
   game_state_data.room = room; //Overwrite room data in to the data structure
   game_state_data.user = current_user; //Set the current user data

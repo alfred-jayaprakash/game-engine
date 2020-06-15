@@ -11,11 +11,20 @@ const AdminScreen = props => {
 
   const onCreateRoom = e => {
     console.log ('URL to connect is ', SERVER_URL);
-    axios.post (SERVER_URL + '/rooms', {room: 'New Room'}).then (res => {
-      if (res.data) {
-        setRoom (res.data);
-      }
-    });
+    axios
+      .post (SERVER_URL + '/rooms', {
+        room: 'New Room',
+        config: {
+          time: 30,
+          questions: 5,
+          category: 'office',
+        },
+      })
+      .then (res => {
+        if (res.data) {
+          setRoom (res.data);
+        }
+      });
   };
 
   return (

@@ -2,6 +2,7 @@ var express = require ('express');
 var router = express.Router ();
 var gameroom = require ('../utils/gameroom');
 var gameserver = require ('../utils/gameserver');
+var gamengine = require ('../utils/gameengine');
 
 // define the default route
 router.get ('/', (req, res) => {
@@ -28,11 +29,15 @@ router.get ('/:roomId', (req, res) => {
 router.post ('/', (req, res) => {
   console.log (
     'Request created to start a new game with room name: ',
-    req.body.room
+    req.body.room,
+    req.body.config
   );
   let roomdata = gameroom.createRoom (req.body.room);
-  console.log ('New room create:', roomdata);
-  res.status (200).send (roomdata);
+  gamengine.handleGameInit (roomdata, req.body.config); //Handle game initialization
+  res.status (200).send ({
+    id: roomdata.id,
+    roomname: roomdata.roomname,
+  });
 });
 
 // Get user by room id and username

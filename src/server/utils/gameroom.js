@@ -19,10 +19,7 @@ const createRoom = roomname => {
     users: [],
   };
   rooms.set (room_id, room);
-  return {
-    id: room_id,
-    roomname,
-  };
+  return room;
 };
 
 //
