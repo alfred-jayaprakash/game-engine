@@ -8,7 +8,6 @@ const handleGameInit = async (room, config) => {
 
   let idx = 1;
   let gameMetaData = photos.map (photo => ({url: photo, ref: idx++}));
-  console.log ('Initialized game meta data: ', gameMetaData);
   room.gameMetaData = gameMetaData;
   room.gameConfig = config;
 };

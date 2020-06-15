@@ -100,11 +100,6 @@ const JoinScreen = props => {
       fluid={true}
     >
       <div>
-        <Row>
-          <Col>
-            <h2>Game.Ninja</h2>
-          </Col>
-        </Row>
         <Nav tabs>
           <NavItem>
             <NavLink
@@ -128,12 +123,10 @@ const JoinScreen = props => {
           </NavItem>
         </Nav>
         <TabContent activeTab={activeTab}>
-          <TabPane tabId="1">
+          <TabPane tabId="1" className="p-3 border">
             {error !== '' &&
               <Row><Col><Alert color="danger">{error}</Alert></Col></Row>}
             <Form>
-              <Row><Col>{'       '}</Col></Row>
-
               <Row>
                 <Col>
                   <FormGroup>
@@ -180,11 +173,10 @@ const JoinScreen = props => {
 
             </Form>
           </TabPane>
-          <TabPane tabId="2">
+          <TabPane tabId="2" className="p-3 border">
             {loginError !== '' &&
               <Row><Col><Alert color="danger">{loginError}</Alert></Col></Row>}
             <Form>
-              <Row><Col>{'       '}</Col></Row>
               <Row>
                 <Col>
                   <FormGroup>
