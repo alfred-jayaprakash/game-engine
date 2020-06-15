@@ -65,10 +65,12 @@ const AdminScreen = props => {
                   onChange={e => setCategory (e.target.value)}
                 >
                   <option selected={true} value="office">Office</option>
-                  <option value="nature">Nature</option>
+                  <option value="city">City</option>
                   <option value="kitchen">Kitchen</option>
                   <option value="superheroes">Superheroes</option>
-                  <option value="christian">Christian</option>
+                  <option value="christianity">Christian</option>
+                  <option value="modern">Modern</option>
+                  <option value="scenic">Scenic</option>
                 </Input>
               </FormGroup>
             </Col>

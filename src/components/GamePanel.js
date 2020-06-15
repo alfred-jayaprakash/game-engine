@@ -19,6 +19,7 @@ let initialized = false;
 
 const GamePanel = props => {
   const [currentAnswer, setCurrentAnswer] = useState ('');
+  // eslint-disable-next-line
   const [answers, setAnswers] = useState ([]);
   const {currentImage} = props;
 
@@ -26,15 +27,17 @@ const GamePanel = props => {
     () => {
       console.log ('Clearing in useEffect of GamePanel');
       //Clear all the user answers
+      answers.splice (0, answers.length); //Clear all the answers
       setAnswers ([]);
       setCurrentAnswer ('');
       return () => {
         //Clear all the user answers
         console.log ('Clearing in useEffect cleanup of GamePanel');
+        answers.splice (0, answers.length); //Clear all the answers
         setAnswers ([]);
         setCurrentAnswer ('');
       };
-    },
+    }, // eslint-disable-next-line
     [currentImage]
   );
 
@@ -140,7 +143,9 @@ const GamePanel = props => {
                 <div className="d-flex bd-highlight">
                   <div className="p-2 flex-grow-1 bd-highlight">{answer}</div>
                   <div className="p-2 bd-highlight">
-                    <Badge color="secondary">{count}</Badge>
+                    <Badge color={count > 1 ? 'info' : 'secondary'}>
+                      {count}
+                    </Badge>
                   </div>
                 </div>
               </ListGroupItem>
