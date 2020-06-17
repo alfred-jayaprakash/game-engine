@@ -13,62 +13,82 @@ import {
   ListGroupItem,
   Badge,
 } from 'reactstrap';
+
 import GameEngine from '../utils/GameEngine';
 
-let initialized = false;
-
+//
+// Main Game Panel
+// Props: Current Image
+//
 const GamePanel = props => {
   const [currentAnswer, setCurrentAnswer] = useState ('');
   // eslint-disable-next-line
   const [answers, setAnswers] = useState ([]);
-  const {currentImage} = props;
+  const [gameState, setGameState] = useState (null);
 
+  //
+  // One-time Initialization
+  //
+  useEffect (() => {
+    GameEngine.registerForGameStateUpdates (state_data =>
+      handleGameStateChange (state_data)
+    );
+    return () => {};
+  }, []);
+
+  //
+  // Logic to clear the answers whenever there is a new image
+  //
   useEffect (
     () => {
-      console.log ('Clearing in useEffect of GamePanel');
       //Clear all the user answers
-      answers.splice (0, answers.length); //Clear all the answers
       setAnswers ([]);
-      setCurrentAnswer ('');
       return () => {
         //Clear all the user answers
-        console.log ('Clearing in useEffect cleanup of GamePanel');
-        answers.splice (0, answers.length); //Clear all the answers
         setAnswers ([]);
-        setCurrentAnswer ('');
       };
     }, // eslint-disable-next-line
-    [currentImage]
+    [props.currentImage]
   );
 
-  const register = () => {
-    //One-time initialization
-    GameEngine.registerForGameStateUpdates (state_data => {
-      console.log (
-        'Received game state change with hits in GamePanel',
-        state_data,
-        answers
-      );
-      if (state_data) {
-        let state_data_answer = state_data.answer;
-        let users = state_data.users;
+  //
+  // Logic to handle hits whenever another user guess same words as us
+  //
+  useEffect (
+    () => {
+      if (gameState) {
+        let state_data_answer = gameState.answer;
+        let users = gameState.users;
         if (state_data_answer) {
-          let idx = answers.findIndex (
-            value =>
+          let newAnswers = answers.map (value => {
+            //Update the Answers with new count
+            if (
               value.answer.toLowerCase () === state_data_answer.toLowerCase ()
-          );
-          if (idx !== -1) {
-            answers[idx].count = users.length; //Preserve the new count
-          }
+            ) {
+              value.count = users.length; //Preserve the new count
+            }
+            return value;
+          });
+          setAnswers (newAnswers);
         }
       }
-    });
-    initialized = true; //Done
+      return () => {};
+    },
+    [gameState]
+  );
+
+  const handleGameStateChange = state_data => {
+    //One-time initialization
+    console.log (
+      'Received game state change with hits from server in GamePanel',
+      state_data
+    );
+    if (state_data) {
+      setGameState (state_data);
+    }
   };
 
-  const onSubmit = e => {
-    if (!initialized) register ();
-
+  const handleSubmit = e => {
     if (currentAnswer === '') {
       return console.log ('Answer cannot be empty');
     }
@@ -84,7 +104,13 @@ const GamePanel = props => {
       return console.log ('Word already guessed');
     }
 
-    answers.push ({answer: currentAnswer.toLowerCase (), count: 1});
+    setAnswers (
+      answers.concat ({
+        answer: currentAnswer.toLowerCase (),
+        count: 1,
+      })
+    );
+
     props.onAnswer (currentAnswer.toLowerCase ());
     setCurrentAnswer ('');
   };
@@ -98,11 +124,11 @@ const GamePanel = props => {
               top
               width="256"
               height="256"
-              src={currentImage}
+              src={props.currentImage}
               alt="Game Image"
             />
             <CardBody>
-              <Form>
+              <Form onSubmit={handleSubmit}>
                 <FormGroup>
                   <Input
                     className="form-control form-control-lg"
@@ -110,11 +136,10 @@ const GamePanel = props => {
                     name="answer"
                     id="userAnswer"
                     placeholder="Type your word"
-                    autoFocus={true}
                     onKeyDown={e => {
                       if (e.key === 'Enter') {
                         e.preventDefault ();
-                        onSubmit (e);
+                        handleSubmit (e);
                       }
                     }}
                     onChange={e => setCurrentAnswer (e.target.value)}
@@ -123,9 +148,9 @@ const GamePanel = props => {
                 </FormGroup>
                 <FormGroup>
                   <Button
+                    type="submit"
                     color="info"
                     className="btn-lg btn-block"
-                    onClick={onSubmit}
                   >
                     Submit
                   </Button>
