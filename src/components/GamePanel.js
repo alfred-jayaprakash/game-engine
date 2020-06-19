@@ -73,7 +73,7 @@ const GamePanel = props => {
         }
       }
       return () => {};
-    },
+    }, // eslint-disable-next-line
     [gameState]
   );
 

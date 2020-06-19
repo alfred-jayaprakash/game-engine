@@ -37,7 +37,7 @@ const handleGameProgress = game_state_data => {
       console.log ('No game data found in room. Creating one ...');
       current_room.gamedata = new Map ();
     } else {
-      console.log ('Game data found in the room ', current_room.gamedata);
+      console.log ('Game data found in the room ');
     }
     const gamedata = current_room.gamedata;
 
@@ -53,7 +53,7 @@ const handleGameProgress = game_state_data => {
       ref_ans_data = new Map (); //List of all answers
       gamedata.set (gamestate.ref, ref_ans_data);
     } else {
-      console.log ('Game state found for ref', ref_ans_data);
+      console.log ('Game state found for ref');
     }
 
     /**
@@ -76,11 +76,11 @@ const handleGameProgress = game_state_data => {
           user => user.username === username
         );
         if (answered_user) {
-          console.log (
-            answered_user,
-            'had previously provided answer ',
-            answer
-          );
+          // console.log (
+          //   answered_user,
+          //   'had previously provided answer ',
+          //   answer
+          // );
           answered_user.score += 100; //Add 100 for each of the users
           users_to_update_state.push (answered_user.id); //Users who should receive the new state
         }

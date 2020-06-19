@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Row,
   Col,
@@ -11,8 +11,6 @@ import {
 } from 'reactstrap';
 import GameEngine from '../utils/GameEngine';
 
-let initialized = false;
-
 const WAITING_STATUS = 'wait';
 const GAME_START = 'start';
 const GAME_END = 'end';
@@ -22,36 +20,42 @@ const AdminGamePanel = props => {
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
   const [gameScores, setGameScores] = useState ([]);
 
-  if (!initialized) {
-    //setRoom (props.room);
-    console.log ('Trying to join room ', props.room);
-    GameEngine.connect ();
-    GameEngine.join ('Game Admin', props.room, (error, data) => {
-      if (error) {
-        console.log (error);
-      }
-      setUsers (data);
-    });
-    GameEngine.registerForRoomNotifications (data => {
-      console.log ('Received updated roomdata in AdminScreen', data);
-      if (data && data.users) {
-        setUsers (data.users);
-      }
-    });
+  //
+  // One-time Initialization
+  //
+  useEffect (
+    () => {
+      //setRoom (props.room);
+      console.log ('Trying to join room ', props.room);
+      GameEngine.connect ();
+      GameEngine.join ('Game Admin', props.room, (error, data) => {
+        if (error) {
+          console.log (error);
+        }
+        setUsers (data);
+      });
+      GameEngine.registerForRoomNotifications (data => {
+        console.log ('Received updated roomdata in AdminScreen', data);
+        if (data && data.users) {
+          setUsers (data.users);
+        }
+      });
 
-    GameEngine.registerForGameStatus (data => {
-      console.log ('Received game status change in AdminScreen', data);
-      if (data && data.status) {
-        setGameStatus (data.status);
-      }
+      GameEngine.registerForGameStatus (data => {
+        console.log ('Received game status change in AdminScreen', data);
+        if (data && data.status) {
+          setGameStatus (data.status);
+        }
 
-      if (data && data.scores) {
-        setGameScores (data.scores);
-      }
-    });
+        if (data && data.scores) {
+          setGameScores (data.scores);
+        }
+      });
 
-    initialized = true;
-  }
+      return () => {};
+    },
+    [props.room]
+  );
 
   const handleStart = () => {
     GameEngine.sendGameStatus ({room: props.room, status: GAME_START}, data => {

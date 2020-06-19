@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
 import {
   Container,
@@ -15,8 +15,6 @@ import GameEngine from '../utils/GameEngine';
 import TimerPanel from '../components/TimerPanel';
 import ScorePanel from '../components/ScorePanel';
 import GamePanel from '../components/GamePanel';
-
-let initialized = false;
 
 const WAITING_STATUS = 'wait';
 const GAME_START = 'start';
@@ -36,8 +34,10 @@ const GameScreen = props => {
   const [gameScores, setGameScores] = useState ([]);
   const history = useHistory ();
 
-  //One-time initialization
-  if (!initialized) {
+  //
+  // One-time Initialization
+  //
+  useEffect (() => {
     //Following state values set by calling function in Join Screen
     let user = props.location.state.user;
     let room = props.location.state.room;
@@ -48,7 +48,10 @@ const GameScreen = props => {
       if (error) {
         setError (error + '. Redirecting in 3 secs ...');
         setTimeout (() => {
-          history.push ('/');
+          history.push ({
+            pathname: '/',
+            state: {},
+          });
         }, 3000);
       } else {
         //setUsers (data);
@@ -86,8 +89,8 @@ const GameScreen = props => {
         }
       }
     });
-    initialized = true;
-  }
+    return () => {}; // eslint-disable-next-lin
+  }, []);
 
   //
   // When user answers
