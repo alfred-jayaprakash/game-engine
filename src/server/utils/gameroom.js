@@ -44,15 +44,16 @@ const getAllRooms = () => rooms;
 //
 //
 //
-const getUsersInRoom = room_id => {
+const getUsersInRoom = (room_id, score_sort = false) => {
   let room = getRoom (room_id);
   if (!room) {
     return {
       error: 'Invalid room',
     };
   }
-
-  return room.users;
+  let roomUsers = room.users;
+  if (score_sort) roomUsers = room.users.sort ((x, y) => y.score - x.score);
+  return roomUsers;
 };
 
 //

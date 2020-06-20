@@ -15,6 +15,8 @@ const WAITING_STATUS = 'wait';
 const GAME_START = 'start';
 const GAME_END = 'end';
 
+const GAME_ADMIN_USER = 'Game Admin';
+
 const AdminGamePanel = props => {
   const [users, setUsers] = useState ([]);
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
@@ -28,7 +30,7 @@ const AdminGamePanel = props => {
       //setRoom (props.room);
       console.log ('Trying to join room ', props.room);
       GameEngine.connect ();
-      GameEngine.join ('Game Admin', props.room, (error, data) => {
+      GameEngine.join (GAME_ADMIN_USER, props.room, (error, data) => {
         if (error) {
           console.log (error);
         }

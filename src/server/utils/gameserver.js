@@ -1,27 +1,35 @@
 const gameroom = require ('./gameroom');
 const gameengine = require ('./gameengine');
 
-const WAITING_STATUS = 'wait';
+const JOIN_EVENT = 'join';
+const GAME_STATUS_EVENT = 'game_status';
+const DISCONNECT_EVENT = 'disconnect';
+const ROOM_DATA_EVENT = 'room_data';
+const STATE_EVENT = 'state';
+
 const GAME_START = 'start';
 const GAME_PROGRESS = 'run';
 const GAME_END = 'end';
+
+const MAXIMUM_USER_SIZE = 20;
+const GAME_ADMIN_USER = 'Game Admin';
 
 //
 // Connect handler: Handle client connect events
 //
 const handleNewConnection = (io, socket) => {
   //Setup Game join handler
-  socket.on ('join', (options, callback) =>
+  socket.on (JOIN_EVENT, (options, callback) =>
     handleJoin (options, callback, socket, io)
   );
 
   //Setup Game status change handler
-  socket.on ('game_status', (data, callback) =>
+  socket.on (GAME_STATUS_EVENT, (data, callback) =>
     handleGameStatus (data, callback, socket, io)
   );
 
   //Setup Disconnect handler
-  socket.on ('disconnect', () => handleDisconnect (socket, io));
+  socket.on (DISCONNECT_EVENT, () => handleDisconnect (socket, io));
 };
 
 //
@@ -34,32 +42,17 @@ const handleJoin = (options, callback, socket, io) => {
     //If error, return straightaway
     return callback (error, null);
   }
+  let roomUsers = gameroom.getUsersInRoom (user.room);
+  if (roomUsers.length > MAXIMUM_USER_SIZE)
+    roomUsers = roomUsers.slice (0, MAXIMUM_USER_SIZE);
 
   socket.join (user.room, () => {
-    io.to (user.room).emit ('room_data', {
+    io.to (user.room).emit (ROOM_DATA_EVENT, {
       //Send updated user list
       room: user.room,
-      users: gameroom.getUsersInRoom (user.room),
+      users: roomUsers,
     });
-    callback (null, gameroom.getUsersInRoom (user.room)); //All's well
-  });
-};
-
-//
-// Broadcast handler: Broadcast join events to rooms asynchronously
-//
-const broadcast = (io, socket, user) => {
-  return new Promise ((resolve, reject) => {
-    setTimeout (() => {
-      //socket.emit ('message', generateMessage ('System', 'welcome'));
-      //socket.broadcast.to (user.room).emit ('user_join', user.username); //Tell everyone that the user has joined
-      io.to (user.room).emit ('room_data', {
-        //Send updated user list
-        room: user.room,
-        users: gameroom.getUsersInRoom (user.room),
-      });
-      resolve ();
-    }, 0);
+    callback (null, roomUsers); //All's well
   });
 };
 
@@ -70,7 +63,7 @@ const handleDisconnect = (socket, io) => {
   const user = gameroom.removeUser (socket.id);
   if (user) {
     console.log ('Received disconnect and broadcasting to everyone', user);
-    io.to (user.room).emit ('room_data', {
+    io.to (user.room).emit (ROOM_DATA_EVENT, {
       room: user.room,
       users: gameroom.getUsersInRoom (user.room),
     }); //Send the updated user list
@@ -109,7 +102,7 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
     //
     if (game_state_data.update_users && game_state_data.update_data) {
       game_state_data.update_users.forEach (socketId => {
-        io.to (socketId).emit ('state', game_state_data.update_data);
+        io.to (socketId).emit (STATE_EVENT, game_state_data.update_data);
       });
     }
 
@@ -117,8 +110,12 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
     // Now copy the latest scores to update everyone
     //
     let scores = [];
-    room.users.forEach (user => {
-      if (user.username !== 'Game Admin') {
+    let roomUsers = gameroom.getUsersInRoom (parseInt (roomId), true); //Sort users by scores descending
+    //Trim the size of array we send back to clients
+    if (roomUsers.length > MAXIMUM_USER_SIZE)
+      roomUsers = roomUsers.slice (0, MAXIMUM_USER_SIZE);
+    roomUsers.forEach (user => {
+      if (user.username !== GAME_ADMIN_USER) {
         scores.push ({
           user: user.username,
           score: user.score,
@@ -131,7 +128,7 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
     //   'Game status response to be broadcasted to everyone ',
     //   game_engine_response
     // );
-    io.to (roomId).emit ('game_status', game_engine_response); //Send update game status to everyone
+    io.to (roomId).emit (GAME_STATUS_EVENT, game_engine_response); //Send update game status to everyone
   }
 };
 
