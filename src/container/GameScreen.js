@@ -38,6 +38,14 @@ const GameScreen = props => {
   // One-time Initialization
   //
   useEffect (() => {
+    //Defensive code
+    if (props.location && props.location.state) {
+      initialize ();
+    }
+    return () => {}; // eslint-disable-next-lin
+  }, []);
+
+  const initialize = () => {
     //Following state values set by calling function in Join Screen
     let user = props.location.state.user;
     let room = props.location.state.room;
@@ -89,8 +97,7 @@ const GameScreen = props => {
         }
       }
     });
-    return () => {}; // eslint-disable-next-lin
-  }, []);
+  };
 
   //
   // When user answers

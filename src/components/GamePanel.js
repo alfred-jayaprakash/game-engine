@@ -128,7 +128,7 @@ const GamePanel = props => {
               alt="Game Image"
             />
             <CardBody>
-              <Form onSubmit={handleSubmit}>
+              <Form>
                 <FormGroup>
                   <Input
                     className="form-control form-control-lg"
@@ -148,9 +148,10 @@ const GamePanel = props => {
                 </FormGroup>
                 <FormGroup>
                   <Button
-                    type="submit"
+                    type="button"
                     color="info"
                     className="btn-lg btn-block"
+                    onClick={handleSubmit}
                   >
                     Submit
                   </Button>
