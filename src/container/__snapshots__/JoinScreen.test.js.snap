@@ -2,44 +2,53 @@
 
 exports[`should render correctly without issues 1`] = `
 <Container
-  className="centered-form border-primary"
+  className="d-flex flex-column justify-content-center bg-dark text-white vertical-center"
+  fluid={true}
   tag="div"
 >
-  <Row
-    className="centered.form__box"
-    tag="div"
-    widths={
-      Array [
-        "xs",
-        "sm",
-        "md",
-        "lg",
-        "xl",
-      ]
-    }
-  >
-    <Col
-      className="col-lg-12"
-      tag="div"
-      widths={
-        Array [
-          "xs",
-          "sm",
-          "md",
-          "lg",
-          "xl",
-        ]
-      }
+  <div>
+    <Nav
+      tabs={true}
+      tag="ul"
+      vertical={false}
     >
-      <Form
-        tag="form"
+      <NavItem
+        tag="li"
       >
-        <FormGroup
-          tag="div"
+        <NavLink
+          className="active"
+          onClick={[Function]}
+          tag="a"
         >
-          <Label
-            for="gameRoom"
-            tag="label"
+          Join
+        </NavLink>
+      </NavItem>
+      <NavItem
+        tag="li"
+      >
+        <NavLink
+          className=""
+          onClick={[Function]}
+          tag="a"
+        >
+          Host
+        </NavLink>
+      </NavItem>
+    </Nav>
+    <TabContent
+      activeTab="1"
+      tag="div"
+    >
+      <TabPane
+        className="p-3 border"
+        tabId="1"
+        tag="div"
+      >
+        <Form
+          tag="form"
+        >
+          <Row
+            tag="div"
             widths={
               Array [
                 "xs",
@@ -50,32 +59,198 @@ exports[`should render correctly without issues 1`] = `
               ]
             }
           >
-            Enter Game Room
-          </Label>
-          <Input
-            disabled={false}
-            id="gameRoom"
-            name="gameRoom"
-            onChange={[Function]}
-            placeholder="Game Room ID"
-            type="text"
-          />
-        </FormGroup>
-        <Button
-          color="primary"
-          onClick={[Function]}
-          tag="button"
+            <Col
+              tag="div"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
+            >
+              <FormGroup
+                tag="div"
+              >
+                <Input
+                  className="form-control form-control-lg p-4"
+                  disabled={false}
+                  id="gameRoom"
+                  name="gameRoom"
+                  onChange={[Function]}
+                  placeholder="Game Room ID"
+                  type="text"
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row
+            tag="div"
+            widths={
+              Array [
+                "xs",
+                "sm",
+                "md",
+                "lg",
+                "xl",
+              ]
+            }
+          >
+            <Col
+              tag="div"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
+            >
+              <FormGroup
+                tag="div"
+              >
+                <Button
+                  className="btn-lg btn-block"
+                  color="info"
+                  onClick={[Function]}
+                  tag="button"
+                >
+                  Next
+                </Button>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form>
+      </TabPane>
+      <TabPane
+        className="p-3 border"
+        tabId="2"
+        tag="div"
+      >
+        <Form
+          tag="form"
         >
-          Next
-        </Button>
-            
-        <Link
-          to="/admin"
-        >
-          Admins click here
-        </Link>
-      </Form>
-    </Col>
-  </Row>
+          <Row
+            tag="div"
+            widths={
+              Array [
+                "xs",
+                "sm",
+                "md",
+                "lg",
+                "xl",
+              ]
+            }
+          >
+            <Col
+              tag="div"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
+            >
+              <FormGroup
+                tag="div"
+              >
+                <Input
+                  className="form-control form-control-lg"
+                  id="adminId"
+                  name="adminId"
+                  onChange={[Function]}
+                  placeholder="email@domain.com"
+                  type="text"
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row
+            tag="div"
+            widths={
+              Array [
+                "xs",
+                "sm",
+                "md",
+                "lg",
+                "xl",
+              ]
+            }
+          >
+            <Col
+              tag="div"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
+            >
+              <FormGroup
+                tag="div"
+              >
+                <Input
+                  className="form-control form-control-lg"
+                  id="adminPass"
+                  name="adminPass"
+                  onChange={[Function]}
+                  placeholder="Your Password"
+                  type="password"
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row
+            tag="div"
+            widths={
+              Array [
+                "xs",
+                "sm",
+                "md",
+                "lg",
+                "xl",
+              ]
+            }
+          >
+            <Col
+              tag="div"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
+            >
+              <FormGroup
+                tag="div"
+              >
+                <Button
+                  className="btn-lg btn-block"
+                  color="info"
+                  onClick={[Function]}
+                  tag="button"
+                >
+                  Login
+                </Button>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form>
+      </TabPane>
+    </TabContent>
+  </div>
 </Container>
 `;
