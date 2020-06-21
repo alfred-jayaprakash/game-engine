@@ -13,9 +13,6 @@ jobs:
             - run: npm install
             - run: npm test            
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
     heroku_deploy:
       jobs:
         - heroku/deploy-via-git:
@@ -23,4 +20,4 @@ workflows:
              - build-and-test # only run deploy-via-git job if the build job has completed
            filters:
              branches:
-               only: master # only run deploy-via-git job on master branc
+               only: master # only run deploy-via-git job on master branch
