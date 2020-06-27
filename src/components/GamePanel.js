@@ -12,6 +12,7 @@ import {
   ListGroup,
   ListGroupItem,
   Badge,
+  FormText,
 } from 'reactstrap';
 
 import GameEngine from '../utils/GameEngine';
@@ -23,6 +24,7 @@ import GameEngine from '../utils/GameEngine';
 const GamePanel = props => {
   const [currentAnswer, setCurrentAnswer] = useState ('');
   const [answers, setAnswers] = useState ([]);
+  const [error, setError] = useState ('');
   const gameStateRef = useRef ();
 
   //
@@ -42,6 +44,8 @@ const GamePanel = props => {
     () => {
       //Clear all the user answers
       setAnswers ([]);
+      setCurrentAnswer ('');
+      setError ('');
       return () => {
         //Clear all the user answers
         setAnswers ([]);
@@ -90,10 +94,13 @@ const GamePanel = props => {
 
   const handleSubmit = e => {
     if (currentAnswer === '') {
-      return console.log ('Answer cannot be empty');
+      return setError ('Guess cannot be empty');
+    }
+    if (currentAnswer.length < 2) {
+      return setError ('Guess is too short');
     }
     if (currentAnswer.length > 20) {
-      return console.log ('Answer length greater than 20');
+      return setError ('Guess cannot be longer than 20');
     }
 
     if (
@@ -101,7 +108,7 @@ const GamePanel = props => {
         value => currentAnswer.toLowerCase () === value.answer.toLowerCase ()
       ) !== -1
     ) {
-      return console.log ('Word already guessed');
+      return setError ('Word already guessed');
     }
 
     setAnswers ([
@@ -113,6 +120,7 @@ const GamePanel = props => {
     ]);
 
     props.onAnswer (currentAnswer.toLowerCase ());
+    setError ('');
     setCurrentAnswer ('');
   };
 
@@ -144,8 +152,10 @@ const GamePanel = props => {
                       }
                     }}
                     onChange={e => setCurrentAnswer (e.target.value)}
+                    invalid={error !== ''}
                     value={currentAnswer}
                   />
+                  {error !== '' && <FormText color="danger">{error}</FormText>}
                 </FormGroup>
                 <FormGroup>
                   <Button
