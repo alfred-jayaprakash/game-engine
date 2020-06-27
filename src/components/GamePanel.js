@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Row,
   Col,
@@ -22,9 +22,8 @@ import GameEngine from '../utils/GameEngine';
 //
 const GamePanel = props => {
   const [currentAnswer, setCurrentAnswer] = useState ('');
-  // eslint-disable-next-line
   const [answers, setAnswers] = useState ([]);
-  const [gameState, setGameState] = useState (null);
+  const gameStateRef = useRef ();
 
   //
   // One-time Initialization
@@ -33,7 +32,7 @@ const GamePanel = props => {
     GameEngine.registerForGameStateUpdates (state_data =>
       handleGameStateChange (state_data)
     );
-    return () => {};
+    return () => {}; //TODO: Remove socket.io state_data listener
   }, []);
 
   //
@@ -56,9 +55,9 @@ const GamePanel = props => {
   //
   useEffect (
     () => {
-      if (gameState) {
-        let state_data_answer = gameState.answer;
-        let users = gameState.users;
+      if (gameStateRef && gameStateRef.current) {
+        let state_data_answer = gameStateRef.current.answer;
+        let users = gameStateRef.current.users;
         if (state_data_answer) {
           let newAnswers = answers.map (value => {
             //Update the Answers with new count
@@ -74,7 +73,7 @@ const GamePanel = props => {
       }
       return () => {};
     }, // eslint-disable-next-line
-    [gameState]
+    [gameStateRef.current]
   );
 
   const handleGameStateChange = state_data => {
@@ -84,7 +83,8 @@ const GamePanel = props => {
       state_data
     );
     if (state_data) {
-      setGameState (state_data);
+      //setGameState (state_data);
+      gameStateRef.current = state_data;
     }
   };
 
@@ -104,12 +104,13 @@ const GamePanel = props => {
       return console.log ('Word already guessed');
     }
 
-    setAnswers (
-      answers.concat ({
+    setAnswers ([
+      ...answers,
+      {
         answer: currentAnswer.toLowerCase (),
         count: 1,
-      })
-    );
+      },
+    ]);
 
     props.onAnswer (currentAnswer.toLowerCase ());
     setCurrentAnswer ('');

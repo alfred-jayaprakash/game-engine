@@ -8,7 +8,7 @@ const TimerPanel = props => {
   const [timerVal, setTimerVal] = useState (100);
   const [timerStr, setTimerStr] = useState ('');
   const [timerCol, setTimerCol] = useState ('success');
-  const {duration, currentRef, onTimeOver} = props;
+  const {duration, currentImage, onTimeOver} = props;
 
   useEffect (
     () => {
@@ -33,7 +33,7 @@ const TimerPanel = props => {
         clearInterval (timer);
       };
     }, // eslint-disable-next-line
-    [currentRef]
+    [currentImage] //Whenever the image changes
   );
 
   return (

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {useHistory} from 'react-router-dom';
 import {
   Container,
@@ -22,16 +22,20 @@ const GAME_PROGRESS = 'run';
 // eslint-disable-next-line
 const GAME_END = 'end';
 
+const REDIRECT_TIMEOUT = 3000;
+
 const GameScreen = props => {
   const [error, setError] = useState ('');
   const [gameStatus, setGameStatus] = useState (WAITING_STATUS);
-  const [duration, setDuration] = useState (30);
-  const [currentRef, setCurrentRef] = useState ('');
-  const [currentImage, setCurrentImage] = useState ('');
-  const [counter, setCounter] = useState (0);
-  const [gameMetaData, setGameMetaData] = useState ([]);
   const [score, setScore] = useState (0);
-  const [gameScores, setGameScores] = useState ([]);
+  const [currentImage, setCurrentImage] = useState ('');
+
+  const duration = useRef (30);
+  const currentRef = useRef ('');
+  const counter = useRef (0);
+  const gameMetaDataRef = useRef ([]);
+  const gameScores = useRef ([]);
+
   const history = useHistory ();
 
   //
@@ -39,10 +43,8 @@ const GameScreen = props => {
   //
   useEffect (() => {
     //Defensive code
-    if (props.location && props.location.state) {
-      initialize ();
-    }
-    return () => {}; // eslint-disable-next-lin
+    initialize ();
+    return () => {}; // eslint-disable-next-line
   }, []);
 
   const initialize = () => {
@@ -54,13 +56,13 @@ const GameScreen = props => {
     GameEngine.connect ();
     GameEngine.join (user, parseInt (room), (error, data) => {
       if (error) {
-        setError (error + '. Redirecting in 3 secs ...');
+        setError (error + '. Redirecting ...');
         setTimeout (() => {
           history.push ({
             pathname: '/',
             state: {},
           });
-        }, 3000);
+        }, REDIRECT_TIMEOUT);
       } else {
         //setUsers (data);
       }
@@ -78,22 +80,22 @@ const GameScreen = props => {
       if (data) {
         if (data.status) setGameStatus (data.status);
         if (data.state) {
-          setGameMetaData (data.state);
+          gameMetaDataRef.current = data.state;
           if (data.state.length > 0) {
-            setCurrentRef (data.state[counter].ref);
-            setCurrentImage (data.state[counter].url);
+            setCurrentImage (data.state[counter.current].url);
+            currentRef.current = data.state[counter.current].ref;
           }
         }
         if (data.config && data.config.time) {
           console.log ('Setting duration as :', data.config.time);
-          setDuration (data.config.time);
+          duration.current = data.config.time;
         }
         if (data.scores) {
           let userScoreData = data.scores.find (
             user => user.user === props.location.state.user
           ); //Find my own score
           setScore (userScoreData.score); //And set it
-          setGameScores (data.scores);
+          gameScores.current = data.scores;
         }
       }
     });
@@ -109,7 +111,7 @@ const GameScreen = props => {
         room: props.location.state.room,
         status: GAME_PROGRESS,
         state: {
-          ref: currentRef,
+          ref: currentRef.current,
           response: answer,
         },
       },
@@ -123,14 +125,17 @@ const GameScreen = props => {
   // Timer complete
   //
   const onTimeOver = () => {
-    setCounter (counter + 1); //Increment the state counter
-    console.log ('Timer has ended. Resetting time', counter);
-    if (counter + 1 < gameMetaData.length) {
-      let newMetaData = gameMetaData[counter + 1];
+    counter.current++; //Increment the counter
+    console.log ('Timer has ended. Resetting time:', counter.current);
+    let gameMetaData = gameMetaDataRef.current;
+    if (counter.current + 1 < gameMetaData.length) {
+      console.log ('Switching to next image ', counter.current, gameMetaData);
+      let newMetaData = gameMetaData[counter.current + 1];
       console.log ('Resetting the data to new data: ', newMetaData);
-      setCurrentRef (newMetaData.ref); //Set the contents to next data
+      currentRef.current = newMetaData.ref;
       setCurrentImage (newMetaData.url); //Set the contents to the next data
     } else {
+      console.log ('Finished all the questions. Closing');
       setGameStatus (GAME_END);
       GameEngine.sendGameStatus (
         {
@@ -172,15 +177,11 @@ const GameScreen = props => {
         <div>
           <ScorePanel score={score} />
           <TimerPanel
-            duration={duration}
-            onTimeOver={onTimeOver}
-            currentRef={currentRef}
-          />
-          <GamePanel
-            currentRef={currentRef}
+            duration={duration.current}
             currentImage={currentImage}
-            onAnswer={onAnswer}
+            onTimeOver={onTimeOver}
           />
+          <GamePanel currentImage={currentImage} onAnswer={onAnswer} />
         </div>}
 
       {gameStatus === GAME_END &&
@@ -192,7 +193,7 @@ const GameScreen = props => {
             <ToastBody>
               <Table>
                 <tbody>
-                  {gameScores.map (({user, score}) => (
+                  {gameScores.current.map (({user, score}) => (
                     <tr key={user}>
                       <td>{user}</td>
                       <td>{score}</td>
