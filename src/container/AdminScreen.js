@@ -62,9 +62,10 @@ const AdminScreen = props => {
                   className="form-control-lg"
                   name="selectcategory"
                   id="category"
+                  value="gn-office"
                   onChange={e => setCategory (e.target.value)}
                 >
-                  <option selected={true} value="gn-office">Office</option>
+                  <option value="gn-office">Office</option>
                   <option value="gn-home">Home</option>
                   <option value="gn-nature">Nature</option>
                   <option value="gn-christian">Christian</option>
@@ -82,10 +83,11 @@ const AdminScreen = props => {
                   name="selectcount"
                   className="form-control-lg"
                   id="count"
+                  value="5"
                   onChange={e => setQuestions (e.target.value)}
                 >
                   <option value="3">3</option>
-                  <option selected={true} value="5">5</option>
+                  <option value="5">5</option>
                   <option value="10">10</option>
                 </Input>
               </FormGroup>
@@ -100,10 +102,11 @@ const AdminScreen = props => {
                   name="selectduration"
                   className="form-control-lg"
                   id="duration"
+                  value="30"
                   onChange={e => setTime (e.target.value)}
                 >
                   <option value="20">20</option>
-                  <option selected={true} value="30">30</option>
+                  <option value="30">30</option>
                   <option value="60">60</option>
                 </Input>
               </FormGroup>

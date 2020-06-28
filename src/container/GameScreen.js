@@ -149,6 +149,7 @@ const GameScreen = props => {
     }
   };
 
+  console.log ('Rendering GameScreen: ', currentImage);
   return (
     <Container
       className="flex-column justify-content-center bg-dark text-light vertical-center"
