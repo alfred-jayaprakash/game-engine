@@ -35,6 +35,9 @@ const AdminScreen = props => {
       })
       .then (res => {
         if (res.data) {
+          if (res.data.error) {
+            return setError (res.data.error);
+          }
           setRoom (res.data);
         }
       });

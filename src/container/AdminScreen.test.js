@@ -1,12 +1,13 @@
 import React from 'react';
-import {render, fireEvent, screen, act} from '@testing-library/react';
+import {render, fireEvent, screen, act, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {shallow} from 'enzyme';
 import AdminScreen from './AdminScreen';
 
-let postFnMock = null;
-let container = null;
-let postPromise = null;
+let postFnMock;
+let container;
+let postPromise;
+let axios;
 
 describe ('Snapshot tests', () => {
   it ('should render correctly without issues', () => {
@@ -23,13 +24,13 @@ describe ('Functional tests', () => {
     jest.unmock ('axios');
 
     // require the actual module so that we can mock exports on the module
-    const axios = require.requireActual ('axios');
+    axios = require.requireActual ('axios');
     let mockResponse = {
       data: {
         id: 121212,
       },
     };
-    postPromise = new Promise ((resolve, reject) => resolve (mockResponse));
+    postPromise = Promise.resolve (mockResponse);
     postFnMock = jest.fn ((url, options) => postPromise);
     axios.post = postFnMock;
   });
@@ -46,7 +47,7 @@ describe ('Functional tests', () => {
   });
 
   it ('initial screen should load correctly', () => {
-    render (<AdminScreen />);
+    render (<AdminScreen />, container);
     //Make sure Pictopia options are shown
     expect (
       screen.getByLabelText ('Choose picture category:')
@@ -62,7 +63,7 @@ describe ('Functional tests', () => {
 
   it ('should create room without changing options', async () => {
     //ACT
-    render (<AdminScreen />);
+    render (<AdminScreen />, container);
     fireEvent.click (screen.getByText ('Create Room'));
     await act (() => postPromise); //Wait until AXIOS POST promise is resolved
 
@@ -83,7 +84,7 @@ describe ('Functional tests', () => {
 
   it ('should create room by changing game options', async () => {
     //ACT
-    render (<AdminScreen />);
+    render (<AdminScreen />, container);
     userEvent.selectOptions (
       screen.getByLabelText ('Choose picture category:'),
       ['gn-modern']
@@ -110,5 +111,29 @@ describe ('Functional tests', () => {
     });
     //Make sure AdminGamePanel is showing
     expect (screen.getByText ('Start Game')).toBeInTheDocument ();
+  });
+
+  it ('should show error when server fails', async () => {
+    //ARRANGE
+    let error = 'Server encountered error';
+    let errorResponse = {
+      data: {
+        error,
+      },
+    };
+    postPromise = Promise.resolve (errorResponse);
+    postFnMock = jest.fn ((url, options) => postPromise);
+    axios.post = postFnMock;
+
+    //ACT
+    render (<AdminScreen />, container);
+    fireEvent.click (screen.getByText ('Create Room'));
+    await act (() => postPromise); //Wait until AXIOS POST promise is resolved
+
+    //Make sure error is displayed in screen
+    expect (screen.getByText (error)).toBeInTheDocument ();
+
+    //Make sure AdminGamePanel is not showing
+    expect (screen.queryByText ('Start Game')).not.toBeInTheDocument ();
   });
 });

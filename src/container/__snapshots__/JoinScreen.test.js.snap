@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should render correctly without issues 1`] = `
+exports[`Snapshot tests should render correctly without issues 1`] = `
 <Container
   className="d-flex flex-column justify-content-center bg-dark text-white vertical-center"
   fluid={true}
