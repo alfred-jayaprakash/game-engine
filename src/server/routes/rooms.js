@@ -11,7 +11,7 @@ router.get ('/', (req, res) => {
   for (let [id, room] of roomData) {
     roomList.push ({room: room.roomname, id: room.id});
   }
-  console.log ('Rooms route GET was triggered', roomList);
+  // console.log ('Rooms route GET was triggered', roomList);
   res.status (200).send (roomList);
 });
 
@@ -27,11 +27,11 @@ router.get ('/:roomId', (req, res) => {
 
 // define the create room route
 router.post ('/', (req, res) => {
-  console.log (
-    'Request created to start a new game with room name: ',
-    req.body.room,
-    req.body.config
-  );
+  // console.log (
+  //   'Request created to start a new game with room name: ',
+  //   req.body.room,
+  //   req.body.config
+  // );
   let roomdata = gameroom.createRoom (req.body.room);
   gamengine.handleGameInit (roomdata, req.body.config); //Handle game initialization
   res.status (200).send ({
