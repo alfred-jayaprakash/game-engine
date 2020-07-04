@@ -27,7 +27,7 @@ describe ('Integration tests', () => {
  */
   beforeAll (done => {
     //Set timeout
-    jest.setTimeout (10000);
+    jest.setTimeout (20000);
 
     //Setup the Socket.IO Server
     httpServer = http.createServer ().listen ();
@@ -79,7 +79,7 @@ describe ('Integration tests', () => {
 
     setTimeout (() => {
       if (clientSocketConnected && anotherSocketConnected) done ();
-    }, 50);
+    }, 5000);
   });
 
   /**
@@ -122,13 +122,9 @@ describe ('Integration tests', () => {
       expect (data).toBeFalsy ();
       expect (error).toBeTruthy ();
       expect (error).toBe ('Invalid room');
-    });
-
-    // Use timeout to wait for socket.io server handshakes
-    setTimeout (() => {
       expect (testRoom.users.length).toEqual (0); //There should be 0 users now
       done ();
-    }, 50);
+    });
   });
 
   test ('able to join a valid room', done => {
@@ -139,14 +135,10 @@ describe ('Integration tests', () => {
       (error, data) => {
         expect (error).toBeFalsy ();
         expect (data).toBeTruthy ();
+        expect (testRoom.users.length).toEqual (1); //There should be 1 users now
+        done ();
       }
     );
-
-    // Use timeout to wait for socket.io server handshakes
-    setTimeout (() => {
-      expect (testRoom.users.length).toEqual (1); //There should be 1 users now
-      done ();
-    }, 50);
   });
 
   test ('unable to join a valid room with same id', done => {

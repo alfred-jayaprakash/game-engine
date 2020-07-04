@@ -7,7 +7,7 @@ const MessagePanel = props => {
       <Col>
         <ListGroup>
           {props.data.map (answer => (
-            <ListGroupItem key="{answer}">{answer}</ListGroupItem>
+            <ListGroupItem key={answer}>{answer}</ListGroupItem>
           ))}
         </ListGroup>
       </Col>

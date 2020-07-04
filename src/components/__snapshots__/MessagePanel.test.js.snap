@@ -30,19 +30,19 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
       tag="ul"
     >
       <ListGroupItem
-        key="{answer}"
+        key="one"
         tag="li"
       >
         one
       </ListGroupItem>
       <ListGroupItem
-        key="{answer}"
+        key="two"
         tag="li"
       >
         two
       </ListGroupItem>
       <ListGroupItem
-        key="{answer}"
+        key="three"
         tag="li"
       >
         three
