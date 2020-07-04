@@ -165,15 +165,12 @@ describe ('Integration tests', () => {
           (error, data) => {
             expect (data).toBeFalsy ();
             expect (error).toBeTruthy ();
+            expect (testRoom.users.length).toEqual (1); //There should be 1 users now
+            done ();
           }
         );
       }
     );
-    // Use timeout to wait for socket.io server handshakes
-    setTimeout (() => {
-      expect (testRoom.users.length).toEqual (1); //There should be 1 users now
-      done ();
-    }, 50);
   });
 
   test ('able to join a valid room with different id', done => {
@@ -191,16 +188,12 @@ describe ('Integration tests', () => {
           (error, data) => {
             expect (error).toBeFalsy ();
             expect (data).toBeTruthy ();
+            expect (testRoom.users.length).toEqual (2); //There should be 2 users now
+            done ();
           }
         );
       }
     );
-
-    // Use timeout to wait for socket.io server handshakes
-    setTimeout (() => {
-      expect (testRoom.users.length).toEqual (2); //There should be 2 users now
-      done ();
-    }, 50);
   });
 
   test ('able to disconnect', done => {
@@ -214,16 +207,16 @@ describe ('Integration tests', () => {
           {username: 'John', room: testRoom.id},
           (error, data) => {
             secondClientSocket.disconnect ();
+
+            // Use timeout to wait for socket.io server handshakes
+            setTimeout (() => {
+              expect (testRoom.users.length).toEqual (1);
+              done ();
+            }, 3000);
           }
         );
       }
     );
-
-    // Use timeout to wait for socket.io server handshakes
-    setTimeout (() => {
-      expect (testRoom.users.length).toEqual (1);
-      done ();
-    }, 50);
   });
 
   test ('able to start a new game', done => {
@@ -259,7 +252,7 @@ describe ('Integration tests', () => {
               expect (firstClientReceivedStart).toBeTruthy ();
               expect (secondClientReceivedStart).toBeTruthy ();
               done ();
-            }, 1000);
+            }, 3000);
           }
         );
       }
