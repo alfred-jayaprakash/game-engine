@@ -26,6 +26,9 @@ describe ('Integration tests', () => {
  * Setup WS & HTTP servers
  */
   beforeAll (done => {
+    //Set timeout
+    jest.setTimeout (10000);
+
     //Setup the Socket.IO Server
     httpServer = http.createServer ().listen ();
     httpServerAddr = httpServer.address ();
