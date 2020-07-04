@@ -132,7 +132,7 @@ const JoinScreen = props => {
                   <FormGroup>
                     <Input
                       className="form-control form-control-lg p-4"
-                      type="text"
+                      type="number"
                       name="gameRoom"
                       id="gameRoom"
                       placeholder="Game Room ID"

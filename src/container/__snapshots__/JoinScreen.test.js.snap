@@ -81,7 +81,7 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
                   name="gameRoom"
                   onChange={[Function]}
                   placeholder="Game Room ID"
-                  type="text"
+                  type="number"
                 />
               </FormGroup>
             </Col>

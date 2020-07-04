@@ -128,9 +128,9 @@ const GameScreen = props => {
     counter.current++; //Increment the counter
     console.log ('Timer has ended. Resetting time:', counter.current);
     let gameMetaData = gameMetaDataRef.current;
-    if (counter.current + 1 < gameMetaData.length) {
+    if (counter.current < gameMetaData.length) {
       console.log ('Switching to next image ', counter.current, gameMetaData);
-      let newMetaData = gameMetaData[counter.current + 1];
+      let newMetaData = gameMetaData[counter.current];
       console.log ('Resetting the data to new data: ', newMetaData);
       currentRef.current = newMetaData.ref;
       setCurrentImage (newMetaData.url); //Set the contents to the next data

@@ -88,16 +88,16 @@ describe ('Functional tests', () => {
     expect (getFnMock).not.toHaveBeenCalled (); //Server should not be called
   });
 
-  it ('non numeric room should result in error shown', () => {
-    render (<JoinScreen />, container);
+  // it ('non numeric room should result in error shown', () => {
+  //   render (<JoinScreen />, container);
 
-    userEvent.type (screen.getByPlaceholderText ('Game Room ID'), 'abcdef');
-    let nextButton = screen.queryByText ('Next');
-    fireEvent.click (nextButton);
+  //   userEvent.type (screen.getByPlaceholderText ('Game Room ID'), 'abcdef');
+  //   let nextButton = screen.queryByText ('Next');
+  //   fireEvent.click (nextButton);
 
-    expect (
-      screen.getByText ('Invalid room number', {exact: false})
-    ).toBeInTheDocument ();
-    expect (getFnMock).not.toHaveBeenCalled (); //Server should not be called
-  });
+  //   expect (
+  //     screen.getByText ('Invalid room number', {exact: false})
+  //   ).toBeInTheDocument ();
+  //   expect (getFnMock).not.toHaveBeenCalled (); //Server should not be called
+  // });
 });

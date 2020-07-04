@@ -32,7 +32,7 @@ const handleGameProgress = game_state_data => {
   const answer = gamestate.response; //User's answer
   let game_engine_response = {};
 
-  if (answer) {
+  if (answer && current_user) {
     if (current_room.gamedata == null) {
       console.log ('No game data found in room. Creating one ...');
       current_room.gamedata = new Map ();

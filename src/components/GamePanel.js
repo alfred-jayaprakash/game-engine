@@ -72,7 +72,7 @@ const GamePanel = props => {
             }
             return value;
           });
-          setAnswers (newAnswers);
+          if (answers) setAnswers (newAnswers);
         }
       }
       return () => {};
