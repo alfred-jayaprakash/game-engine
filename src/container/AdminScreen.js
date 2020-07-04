@@ -18,7 +18,7 @@ const SERVER_URL = process.env.REACT_APP_SERVER_URL || '/';
 const AdminScreen = props => {
   const [room, setRoom] = useState ('');
   const [error, setError] = useState ('');
-  const [category, setCategory] = useState ('office');
+  const [category, setCategory] = useState ('11328847');
   const [time, setTime] = useState ('30');
   const [questions, setQuestions] = useState ('5');
 
@@ -68,11 +68,11 @@ const AdminScreen = props => {
                   value="gn-office"
                   onChange={e => setCategory (e.target.value)}
                 >
-                  <option value="gn-office">Office</option>
-                  <option value="gn-home">Home</option>
-                  <option value="gn-nature">Nature</option>
-                  <option value="gn-christian">Christian</option>
-                  <option value="gn-modern">Modern</option>
+                  <option value="11328847">Random</option>
+                  <option value="10757469">Office</option>
+                  <option value="11328818">Family</option>
+                  <option value="11328826">Nature</option>
+                  <option value="11328790">Christian</option>
                 </Input>
               </FormGroup>
             </Col>

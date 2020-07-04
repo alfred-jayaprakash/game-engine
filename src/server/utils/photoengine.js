@@ -10,7 +10,7 @@ const unsplash = new Unsplash ({accessKey: API_ACCESS_KEY});
 const getPhotos = (query, count) => {
   return new Promise ((resolve, reject) => {
     unsplash.photos
-      .getRandomPhoto ({query, count}) //Get photos by our personal collections
+      .getRandomPhoto ({collections: [query], count}) //Get photos by our personal collections
       .then (toJson)
       .then (unsplashPhotos => {
         let photos_arr = [];

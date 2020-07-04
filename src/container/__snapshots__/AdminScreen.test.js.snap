@@ -60,29 +60,29 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
             value="gn-office"
           >
             <option
-              value="gn-office"
+              value="11328847"
+            >
+              Random
+            </option>
+            <option
+              value="10757469"
             >
               Office
             </option>
             <option
-              value="gn-home"
+              value="11328818"
             >
-              Home
+              Family
             </option>
             <option
-              value="gn-nature"
+              value="11328826"
             >
               Nature
             </option>
             <option
-              value="gn-christian"
+              value="11328790"
             >
               Christian
-            </option>
-            <option
-              value="gn-modern"
-            >
-              Modern
             </option>
           </Input>
         </FormGroup>

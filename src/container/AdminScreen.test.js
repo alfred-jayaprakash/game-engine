@@ -75,7 +75,7 @@ describe ('Functional tests', () => {
       config: {
         time: '30',
         questions: '5',
-        category: 'office',
+        category: '11328847',
       },
     });
     //Make sure AdminGamePanel is showing
@@ -87,7 +87,7 @@ describe ('Functional tests', () => {
     render (<AdminScreen />, container);
     userEvent.selectOptions (
       screen.getByLabelText ('Choose picture category:'),
-      ['gn-modern']
+      ['10757469']
     );
     userEvent.selectOptions (screen.getByLabelText ('Number of pictures:'), [
       '3',
@@ -106,7 +106,7 @@ describe ('Functional tests', () => {
       config: {
         time: '60',
         questions: '3',
-        category: 'gn-modern',
+        category: '10757469',
       },
     });
     //Make sure AdminGamePanel is showing
