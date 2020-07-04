@@ -29,7 +29,7 @@ const handleNewConnection = (io, socket) => {
   );
 
   //Setup Disconnect handler
-  socket.on (DISCONNECT_EVENT, () => handleDisconnect (socket, io));
+  socket.on (DISCONNECT_EVENT, callback => handleDisconnect (socket, io));
 };
 
 //

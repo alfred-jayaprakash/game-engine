@@ -31,11 +31,6 @@ var GameEngine = (function () {
         callback (data);
       });
     },
-    registerForGameStateUpdates: function (callback) {
-      socket.on ('state', data => {
-        callback (data);
-      });
-    },
     disconnect: function () {
       //socket = null;
     },

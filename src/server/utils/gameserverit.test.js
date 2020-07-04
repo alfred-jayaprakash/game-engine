@@ -14,12 +14,12 @@ const GAME_START = 'start';
 const GAME_PROGRESS = 'run';
 const GAME_END = 'end';
 
-let clientSocket;
 let httpServer;
 let httpServerAddr;
 let ioServer;
 let testRoom;
-let anotherSocket;
+let firstClientSocket;
+let secondClientSocket;
 
 describe ('Integration tests', () => {
   /**
@@ -38,6 +38,10 @@ describe ('Integration tests', () => {
 
     //Setup a Game room
     testRoom = gameroom.createRoom ('Jest');
+    testRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
 
     done ();
   });
@@ -57,10 +61,22 @@ describe ('Integration tests', () => {
   beforeEach (done => {
     // Setup
     // Do not hardcode server port and address, square brackets are used for IPv6
-    clientSocket = createClient ();
-    clientSocket.on ('connect', () => {
-      done ();
+    let clientSocketConnected = true;
+    let anotherSocketConnected = true;
+
+    firstClientSocket = createClient ();
+    firstClientSocket.on ('connect', () => {
+      clientSocketConnected = true;
     });
+
+    secondClientSocket = createClient ();
+    secondClientSocket.on ('connect', () => {
+      anotherSocketConnected = true;
+    });
+
+    setTimeout (() => {
+      if (clientSocketConnected && anotherSocketConnected) done ();
+    }, 50);
   });
 
   /**
@@ -68,9 +84,14 @@ describe ('Integration tests', () => {
  */
   afterEach (done => {
     // Cleanup
-    if (clientSocket.connected) {
-      clientSocket.disconnect ();
+    if (firstClientSocket.connected) {
+      firstClientSocket.disconnect ();
     }
+
+    if (secondClientSocket.connected) {
+      secondClientSocket.disconnect ();
+    }
+
     done ();
   });
 
@@ -94,7 +115,7 @@ describe ('Integration tests', () => {
   test ('invalid room should result in error', done => {
     let username = 'AJ';
     let room = 123456;
-    joinRoom (clientSocket, {username, room}, (error, data) => {
+    joinRoom (firstClientSocket, {username, room}, (error, data) => {
       expect (data).toBeFalsy ();
       expect (error).toBeTruthy ();
       expect (error).toBe ('Invalid room');
@@ -104,59 +125,124 @@ describe ('Integration tests', () => {
 
   test ('able to join a valid room', done => {
     let username = 'AJ';
-    joinRoom (clientSocket, {username, room: testRoom.id}, (error, data) => {
-      expect (error).toBeFalsy ();
-      expect (data).toBeTruthy ();
-      done ();
-    });
+    joinRoom (
+      firstClientSocket,
+      {username, room: testRoom.id},
+      (error, data) => {
+        expect (error).toBeFalsy ();
+        expect (data).toBeTruthy ();
+        done ();
+      }
+    );
   });
 
   test ('unable to join a valid room with same id', done => {
     let username = 'AJ';
-    let clientSocketConnected, anotherSocketConnected = false;
-    joinRoom (clientSocket, {username, room: testRoom.id}, (error, data) => {
-      expect (error).toBeFalsy ();
-      expect (data).toBeTruthy ();
-      done ();
-      clientSocketConnected = true;
-    });
-    anotherSocket = createClient ();
-    joinRoom (anotherSocket, {username, room: testRoom.id}, (error, data) => {
-      expect (data).toBeFalsy ();
-      expect (error).toBeTruthy ();
-      anotherSocketConnected = true;
-    });
+    joinRoom (
+      firstClientSocket,
+      {username, room: testRoom.id},
+      (error, data) => {
+        expect (error).toBeFalsy ();
+        expect (data).toBeTruthy ();
 
+        //Now join as second client
+        joinRoom (
+          secondClientSocket,
+          {username, room: testRoom.id},
+          (error, data) => {
+            expect (data).toBeFalsy ();
+            expect (error).toBeTruthy ();
+            done ();
+          }
+        );
+      }
+    );
+  });
+
+  test ('able to join a valid room with different id', done => {
+    joinRoom (
+      firstClientSocket,
+      {username: 'AJ', room: testRoom.id},
+      (error, data) => {
+        expect (error).toBeFalsy ();
+        expect (data).toBeTruthy ();
+
+        //Now join as second client
+        joinRoom (
+          secondClientSocket,
+          {username: 'John', room: testRoom.id},
+          (error, data) => {
+            expect (error).toBeFalsy ();
+            expect (data).toBeTruthy ();
+            expect (testRoom.users.length).toEqual (2); //There should be 2 users now
+            done ();
+          }
+        );
+      }
+    );
+  });
+
+  test ('able to disconnect', done => {
+    joinRoom (
+      firstClientSocket,
+      {username: 'AJ', room: testRoom.id},
+      (error, data) => {
+        //Now join as second client
+        joinRoom (
+          secondClientSocket,
+          {username: 'John', room: testRoom.id},
+          (error, data) => {
+            secondClientSocket.disconnect ();
+          }
+        );
+      }
+    );
+
+    // Use timeout to wait for socket.io server handshakes
     setTimeout (() => {
+      expect (testRoom.users.length).toEqual (1);
       done ();
     }, 50);
   });
 
-  // test ('able to join a valid room with different id', done => {
-  //   let clientSocketConnected, anotherSocketConnected = false;
-  //   joinRoom (
-  //     clientSocket,
-  //     {username: 'AJ', room: testRoom.id},
-  //     (error, data) => {
-  //       expect (error).toBeFalsy ();
-  //       expect (data).toBeTruthy ();
-  //       done ();
-  //       clientSocketConnected = true;
-  //     }
-  //   );
-  //   anotherSocket = createClient ();
-  //   joinRoom (
-  //     anotherSocket,
-  //     {username: 'John', room: testRoom.id},
-  //     (error, data) => {
-  //       expect (error).toBeFalsy ();
-  //       expect (data).toBeTruthy ();
-  //       anotherSocketConnected = true;
-  //     }
-  //   );
+  test ('able to start a new game', done => {
+    let firstClientReceivedStart = false;
+    firstClientSocket.on (GAME_STATUS_EVENT, data => {
+      if (data && data.status === GAME_START && data.config)
+        firstClientReceivedStart = true;
+    });
 
-  //   setTimeout (() => {
-  //     done ();
-  //   }, 50);
-  // });
+    let secondClientReceivedStart = false;
+    secondClientSocket.on (GAME_STATUS_EVENT, data => {
+      if (data && data.status === GAME_START && data.config)
+        secondClientReceivedStart = true;
+    });
+
+    joinRoom (
+      firstClientSocket,
+      {username: 'AJ', room: testRoom.id},
+      (error, data) => {
+        //Now join as second client
+        joinRoom (
+          secondClientSocket,
+          {username: 'John', room: testRoom.id},
+          (error, data) => {
+            //Both clients joined
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              //Send a start event
+              status: GAME_START,
+              room: testRoom.id,
+            });
+          }
+        );
+      }
+    );
+
+    // Use timeout to wait for socket.io server handshakes
+    setTimeout (() => {
+      expect (firstClientReceivedStart).toBeTruthy ();
+      expect (secondClientReceivedStart).toBeTruthy ();
+      done ();
+    }, 50);
+  });
 });
