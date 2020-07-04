@@ -54,7 +54,7 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
                 onChange={[Function]}
                 onKeyDown={[Function]}
                 placeholder="Type your word"
-                type="answer"
+                type="text"
                 value=""
               />
             </FormGroup>

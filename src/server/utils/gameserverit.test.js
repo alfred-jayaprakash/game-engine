@@ -20,7 +20,7 @@ let ioServer;
 let testRoom;
 let firstClientSocket;
 let secondClientSocket;
-let timeout = 30 * 1000;
+let timeout = 10 * 1000;
 
 describe ('Integration tests', () => {
   /**
@@ -31,8 +31,9 @@ describe ('Integration tests', () => {
     jest.setTimeout (timeout);
 
     //Setup the Socket.IO Server
-    httpServer = http.createServer ().listen ();
+    httpServer = http.createServer ().listen (8080);
     httpServerAddr = httpServer.address ();
+    console.log ('Integration test server running in ', httpServerAddr);
     ioServer = serverio (httpServer);
 
     //Setup connection handler from GameServer.js

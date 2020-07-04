@@ -14,7 +14,7 @@ describe ('Snapshot tests', () => {
     GameEngine.connect ();
   });
 
-  it ('should render correctly without issues', () => {
+  test ('should render correctly without issues', () => {
     onAnswer = () => {};
     const component = shallow (
       <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />
@@ -42,7 +42,7 @@ describe ('Functional tests', () => {
     onAnswer.mockClear ();
   });
 
-  it ('initial screen should load correctly', () => {
+  test ('initial screen should load correctly', () => {
     render (
       <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
       container
@@ -50,5 +50,44 @@ describe ('Functional tests', () => {
 
     //Make sure Submit button to be present
     expect (screen.queryByText ('Submit')).toBeInTheDocument ();
+  });
+
+  test ('Empty guess should not work', () => {
+    render (
+      <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
+      container
+    );
+
+    //Make sure Submit button to be present
+    act (() => {
+      let guessInput = screen.queryByPlaceholderText ('Type your word');
+      let submitButton = screen.queryByText ('Submit');
+      fireEvent.click (submitButton);
+    });
+
+    expect (
+      screen.getByText ('Guess cannot be empty', {exact: false}) //Error message should appear
+    ).toBeInTheDocument ();
+    expect (onAnswer).not.toHaveBeenCalled (); //onAnswer should not be called
+  });
+
+  test ('1-letter guess should not work', () => {
+    const {getByPlaceholderText} = render (
+      <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
+      container
+    );
+
+    let guessInput = getByPlaceholderText ('Type your word');
+    // fireEvent.change (guessInput, {
+    //   target: {value: '1'},
+    // });
+    userEvent.type (guessInput, '1');
+    let submitButton = screen.queryByText ('Submit');
+    fireEvent.click (submitButton);
+
+    expect (
+      screen.getByText ('Guess is too short', {exact: false}) //Error message should appear
+    ).toBeInTheDocument ();
+    expect (onAnswer).not.toHaveBeenCalled (); //onAnswer should not be called
   });
 });

@@ -141,10 +141,11 @@ const GamePanel = props => {
                 <FormGroup>
                   <Input
                     className="form-control form-control-lg"
-                    type="answer"
+                    type="text"
                     name="answer"
                     id="userAnswer"
                     placeholder="Type your word"
+                    value={currentAnswer}
                     onKeyDown={e => {
                       if (e.key === 'Enter') {
                         e.preventDefault ();
@@ -153,7 +154,6 @@ const GamePanel = props => {
                     }}
                     onChange={e => setCurrentAnswer (e.target.value)}
                     invalid={error !== ''}
-                    value={currentAnswer}
                   />
                   {error !== '' && <FormText color="danger">{error}</FormText>}
                 </FormGroup>
