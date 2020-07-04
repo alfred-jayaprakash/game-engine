@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot tests should render correctly without issues 1`] = `
+<Container
+  className="flex-column justify-content-center bg-dark text-light vertical-center"
+  fluid={true}
+  tag="div"
+>
+  <Row
+    tag="div"
+    widths={
+      Array [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+      ]
+    }
+  >
+    <Col
+      tag="div"
+      widths={
+        Array [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "xl",
+        ]
+      }
+    >
+      <Toast
+        fade={true}
+        isOpen={true}
+        tag="div"
+        transition={
+          Object {
+            "appear": true,
+            "baseClass": "fade",
+            "baseClassActive": "show",
+            "enter": true,
+            "exit": true,
+            "in": true,
+            "mountOnEnter": false,
+            "onEnter": [Function],
+            "onEntered": [Function],
+            "onEntering": [Function],
+            "onExit": [Function],
+            "onExited": [Function],
+            "onExiting": [Function],
+            "tag": "div",
+            "timeout": 150,
+            "unmountOnExit": true,
+          }
+        }
+      >
+        <ToastHeader
+          charCode={215}
+          className="text-primary"
+          closeAriaLabel="Close"
+          icon={
+            <Spinner
+              size="sm"
+              tag="div"
+              type="border"
+            >
+              Loading...
+            </Spinner>
+          }
+          tag="strong"
+          tagClassName="mr-auto"
+          wrapTag="div"
+        >
+          Waiting ...
+        </ToastHeader>
+        <ToastBody
+          className="text-dark"
+          tag="div"
+        >
+          Please wait for other players to join
+        </ToastBody>
+      </Toast>
+    </Col>
+  </Row>
+</Container>
+`;

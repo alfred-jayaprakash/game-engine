@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot tests should render correctly without issues 1`] = `
+<Row
+  tag="div"
+  widths={
+    Array [
+      "xs",
+      "sm",
+      "md",
+      "lg",
+      "xl",
+    ]
+  }
+>
+  <Col
+    tag="div"
+    widths={
+      Array [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+      ]
+    }
+  >
+    <ListGroup
+      horizontal={false}
+      tag="ul"
+    >
+      <ListGroupItem
+        key="{answer}"
+        tag="li"
+      >
+        one
+      </ListGroupItem>
+      <ListGroupItem
+        key="{answer}"
+        tag="li"
+      >
+        two
+      </ListGroupItem>
+      <ListGroupItem
+        key="{answer}"
+        tag="li"
+      >
+        three
+      </ListGroupItem>
+    </ListGroup>
+  </Col>
+</Row>
+`;
