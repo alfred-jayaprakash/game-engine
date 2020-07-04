@@ -71,11 +71,13 @@ describe ('Integration tests', () => {
 
     firstClientSocket = createClient ();
     firstClientSocket.on ('connect', () => {
+      console.log ('First client successfully connected');
       clientSocketConnected = true;
     });
 
     secondClientSocket = createClient ();
     secondClientSocket.on ('connect', () => {
+      console.log ('Second client successfully connected');
       anotherSocketConnected = true;
     });
 
@@ -102,15 +104,12 @@ describe ('Integration tests', () => {
 
   const createClient = () => {
     // Do not hardcode server port and address, square brackets are used for IPv6
-    return clientio.connect (
-      `http://[${httpServerAddr.address}]:${httpServerAddr.port}`,
-      {
-        'reconnection delay': 0,
-        'reopen delay': 0,
-        'force new connection': true,
-        transports: ['websocket'],
-      }
-    );
+    return clientio.connect (`http://127.0.0.1:${httpServerAddr.port}`, {
+      'reconnection delay': 0,
+      'reopen delay': 0,
+      'force new connection': true,
+      transports: ['websocket'],
+    });
   };
 
   const joinRoom = (socket, options, callback) => {
