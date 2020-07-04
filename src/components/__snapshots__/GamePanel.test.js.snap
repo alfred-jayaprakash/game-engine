@@ -1,0 +1,110 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot tests should render correctly without issues 1`] = `
+<div>
+  <Row
+    tag="div"
+    widths={
+      Array [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+      ]
+    }
+  >
+    <Col
+      tag="div"
+      widths={
+        Array [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "xl",
+        ]
+      }
+    >
+      <Card
+        tag="div"
+      >
+        <CardImg
+          alt="Game Image"
+          height="256"
+          src="./1.jpg"
+          tag="img"
+          top={true}
+          width="256"
+        />
+        <CardBody
+          tag="div"
+        >
+          <Form
+            tag="form"
+          >
+            <FormGroup
+              tag="div"
+            >
+              <Input
+                className="form-control form-control-lg"
+                id="userAnswer"
+                invalid={false}
+                name="answer"
+                onChange={[Function]}
+                onKeyDown={[Function]}
+                placeholder="Type your word"
+                type="answer"
+                value=""
+              />
+            </FormGroup>
+            <FormGroup
+              tag="div"
+            >
+              <Button
+                className="btn-lg btn-block"
+                color="info"
+                onClick={[Function]}
+                tag="button"
+                type="button"
+              >
+                Submit
+              </Button>
+            </FormGroup>
+          </Form>
+        </CardBody>
+      </Card>
+    </Col>
+  </Row>
+  <Row
+    tag="div"
+    widths={
+      Array [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+      ]
+    }
+  >
+    <Col
+      tag="div"
+      widths={
+        Array [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "xl",
+        ]
+      }
+    >
+      <ListGroup
+        horizontal={false}
+        tag="ul"
+      />
+    </Col>
+  </Row>
+</div>
+`;

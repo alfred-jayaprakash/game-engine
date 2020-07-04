@@ -243,6 +243,6 @@ describe ('Integration tests', () => {
       expect (firstClientReceivedStart).toBeTruthy ();
       expect (secondClientReceivedStart).toBeTruthy ();
       done ();
-    }, 50);
+    }, 1000);
   });
 });
