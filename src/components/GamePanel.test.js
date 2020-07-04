@@ -78,9 +78,6 @@ describe ('Functional tests', () => {
     );
 
     let guessInput = getByPlaceholderText ('Type your word');
-    // fireEvent.change (guessInput, {
-    //   target: {value: '1'},
-    // });
     userEvent.type (guessInput, '1');
     let submitButton = screen.queryByText ('Submit');
     fireEvent.click (submitButton);
@@ -89,5 +86,106 @@ describe ('Functional tests', () => {
       screen.getByText ('Guess is too short', {exact: false}) //Error message should appear
     ).toBeInTheDocument ();
     expect (onAnswer).not.toHaveBeenCalled (); //onAnswer should not be called
+  });
+
+  test ('Super long guesses should not work', () => {
+    const {getByPlaceholderText} = render (
+      <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
+      container
+    );
+
+    let guessInput = getByPlaceholderText ('Type your word');
+    userEvent.type (guessInput, 'abcdefghijklmnopqrstu');
+    let submitButton = screen.queryByText ('Submit');
+    fireEvent.click (submitButton);
+
+    expect (
+      screen.getByText ('Guess cannot be longer than 20', {exact: false}) //Error message should appear
+    ).toBeInTheDocument ();
+    expect (onAnswer).not.toHaveBeenCalled (); //onAnswer should not be called
+  });
+
+  test ('new guess should work', () => {
+    const {getByPlaceholderText} = render (
+      <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
+      container
+    );
+
+    let guessInput = getByPlaceholderText ('Type your word');
+    userEvent.type (guessInput, 'one');
+    let submitButton = screen.queryByText ('Submit');
+    fireEvent.click (submitButton);
+
+    expect (
+      screen.getByText ('one', {exact: false}) //Word should appear
+    ).toBeInTheDocument ();
+    expect (onAnswer).toHaveBeenCalled (); //onAnswer should be called
+    expect (onAnswer.mock.calls.length).toEqual (1); //Called exactly once
+    expect (onAnswer.mock.calls[0][0]).toBe ('one'); //First time should be 'one'
+  });
+
+  test ('duplicate guess should not work', () => {
+    const {getByPlaceholderText} = render (
+      <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
+      container
+    );
+
+    let guessInput = getByPlaceholderText ('Type your word');
+    let submitButton = screen.queryByText ('Submit');
+
+    userEvent.type (guessInput, 'one');
+    fireEvent.click (submitButton);
+
+    userEvent.type (guessInput, 'one');
+    fireEvent.click (submitButton);
+
+    expect (
+      screen.getByText ('Word already guessed', {exact: false}) //Error message should appear
+    ).toBeInTheDocument ();
+    expect (onAnswer).toHaveBeenCalled (); //onAnswer should be called
+    expect (onAnswer.mock.calls.length).toEqual (1); //Called exactly twice
+  });
+
+  test ('duplicate guess in different case should not work', () => {
+    const {getByPlaceholderText} = render (
+      <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
+      container
+    );
+
+    let guessInput = getByPlaceholderText ('Type your word');
+    let submitButton = screen.queryByText ('Submit');
+
+    userEvent.type (guessInput, 'OnE');
+    fireEvent.click (submitButton);
+
+    userEvent.type (guessInput, 'oNe');
+    fireEvent.click (submitButton);
+
+    expect (
+      screen.getByText ('Word already guessed', {exact: false}) //Error message should appear
+    ).toBeInTheDocument ();
+    expect (onAnswer).toHaveBeenCalled (); //onAnswer should be called
+    expect (onAnswer.mock.calls.length).toEqual (1); //Called exactly twice
+  });
+
+  test ('unique second guess should work', () => {
+    const {getByPlaceholderText} = render (
+      <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
+      container
+    );
+
+    let guessInput = getByPlaceholderText ('Type your word');
+    let submitButton = screen.queryByText ('Submit');
+
+    userEvent.type (guessInput, 'one');
+    fireEvent.click (submitButton);
+
+    userEvent.type (guessInput, 'two');
+    fireEvent.click (submitButton);
+
+    expect (onAnswer).toHaveBeenCalled (); //onAnswer should be called
+    expect (onAnswer.mock.calls.length).toEqual (2); //Called exactly twice
+    expect (onAnswer.mock.calls[0][0]).toBe ('one'); //First time should be 'one'
+    expect (onAnswer.mock.calls[1][0]).toBe ('two'); //Second time should be 'two'
   });
 });

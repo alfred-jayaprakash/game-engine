@@ -20,7 +20,7 @@ let ioServer;
 let testRoom;
 let firstClientSocket;
 let secondClientSocket;
-let timeout = 10 * 1000;
+let timeout = 20 * 1000;
 
 describe ('Integration tests', () => {
   /**
