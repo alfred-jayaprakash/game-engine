@@ -26,54 +26,12 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
         ]
       }
     >
-      <Card
-        tag="div"
+      <h4
+        className="text-light"
       >
-        <CardImg
-          alt="Game Image"
-          height="256"
-          src="./1.jpg"
-          tag="img"
-          top={true}
-          width="256"
-        />
-        <CardBody
-          tag="div"
-        >
-          <Form
-            tag="form"
-          >
-            <FormGroup
-              tag="div"
-            >
-              <Input
-                className="form-control form-control-lg"
-                id="userAnswer"
-                invalid={false}
-                name="answer"
-                onChange={[Function]}
-                onKeyDown={[Function]}
-                placeholder="Type your word"
-                type="answer"
-                value=""
-              />
-            </FormGroup>
-            <FormGroup
-              tag="div"
-            >
-              <Button
-                className="btn-lg btn-block"
-                color="info"
-                onClick={[Function]}
-                tag="button"
-                type="button"
-              >
-                Submit
-              </Button>
-            </FormGroup>
-          </Form>
-        </CardBody>
-      </Card>
+        Join Game ID: 
+        123456
+      </h4>
     </Col>
   </Row>
   <Row
@@ -100,10 +58,96 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
         ]
       }
     >
-      <ListGroup
-        horizontal={false}
-        tag="ul"
-      />
+      <Button
+        className="btn-lg btn-block"
+        color="success"
+        onClick={[Function]}
+        tag="button"
+      >
+        Start Game
+      </Button>
+    </Col>
+  </Row>
+  <Row
+    tag="div"
+    widths={
+      Array [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+      ]
+    }
+  >
+    <Col
+      tag="div"
+      widths={
+        Array [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "xl",
+        ]
+      }
+    >
+      <Toast
+        fade={true}
+        isOpen={true}
+        tag="div"
+        transition={
+          Object {
+            "appear": true,
+            "baseClass": "fade",
+            "baseClassActive": "show",
+            "enter": true,
+            "exit": true,
+            "in": true,
+            "mountOnEnter": false,
+            "onEnter": [Function],
+            "onEntered": [Function],
+            "onEntering": [Function],
+            "onExit": [Function],
+            "onExited": [Function],
+            "onExiting": [Function],
+            "tag": "div",
+            "timeout": 150,
+            "unmountOnExit": true,
+          }
+        }
+      >
+        <ToastHeader
+          charCode={215}
+          closeAriaLabel="Close"
+          icon={
+            <Spinner
+              size="sm"
+              tag="div"
+              type="border"
+            >
+              Loading...
+            </Spinner>
+          }
+          tag="strong"
+          tagClassName="mr-auto"
+          wrapTag="div"
+        >
+          <div>
+            Waiting for other players to join ...
+          </div>
+        </ToastHeader>
+        <ToastBody
+          tag="div"
+        >
+          <Table
+            responsiveTag="div"
+            tag="table"
+          >
+            <tbody />
+          </Table>
+        </ToastBody>
+      </Toast>
     </Col>
   </Row>
 </div>
