@@ -20,6 +20,7 @@ let ioServer;
 let testRoom;
 let firstClientSocket;
 let secondClientSocket;
+let timeout = 30 * 1000;
 
 describe ('Integration tests', () => {
   /**
@@ -27,7 +28,7 @@ describe ('Integration tests', () => {
  */
   beforeAll (done => {
     //Set timeout
-    jest.setTimeout (20000);
+    jest.setTimeout (timeout);
 
     //Setup the Socket.IO Server
     httpServer = http.createServer ().listen ();
@@ -47,7 +48,7 @@ describe ('Integration tests', () => {
     };
 
     done ();
-  });
+  }, timeout);
 
   /**
  *  Cleanup WS & HTTP servers
@@ -79,8 +80,8 @@ describe ('Integration tests', () => {
 
     setTimeout (() => {
       if (clientSocketConnected && anotherSocketConnected) done ();
-    }, 5000);
-  });
+    }, 10000);
+  }, timeout);
 
   /**
  * Run after each test
@@ -204,7 +205,7 @@ describe ('Integration tests', () => {
             setTimeout (() => {
               expect (testRoom.users.length).toEqual (1);
               done ();
-            }, 3000);
+            }, 10000);
           }
         );
       }
@@ -244,7 +245,7 @@ describe ('Integration tests', () => {
               expect (firstClientReceivedStart).toBeTruthy ();
               expect (secondClientReceivedStart).toBeTruthy ();
               done ();
-            }, 3000);
+            }, 10000);
           }
         );
       }
