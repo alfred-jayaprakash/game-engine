@@ -60,7 +60,7 @@ const getUsersInRoom = (room_id, score_sort = false) => {
 //
 //
 const addUser = ({id, username, room}) => {
-  if (!username) return {};
+  if (!username) return {error: 'Invalid user name'};
 
   if (username.length > 20) {
     return {error: 'Username cannot be longer than 20 chars'};

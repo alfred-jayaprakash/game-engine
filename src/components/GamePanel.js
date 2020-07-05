@@ -86,7 +86,9 @@ const GamePanel = props => {
       if (gameStateRef && gameStateRef.current) {
         let state_data_answer = gameStateRef.current.answer;
         let users = gameStateRef.current.users;
-        if (state_data_answer) {
+        let receivedRef = gameStateRef.current.ref;
+
+        if (state_data_answer && receivedRef === props.currentRef) {
           let newAnswers = answers.map (value => {
             //Update the Answers with new count
             if (

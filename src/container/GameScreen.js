@@ -16,12 +16,9 @@ import TimerPanel from '../components/TimerPanel';
 import ScorePanel from '../components/ScorePanel';
 import GamePanel from '../components/GamePanel';
 
-const WAITING_STATUS = 'wait';
-const GAME_START = 'start';
-const GAME_PROGRESS = 'run';
-// eslint-disable-next-line
-const GAME_END = 'end';
+const {GAME_START, GAME_PROGRESS, GAME_END} = require ('../utils/GlobalConfig');
 
+const WAITING_STATUS = 'wait';
 const REDIRECT_TIMEOUT = 3000;
 
 const GameScreen = props => {
@@ -188,7 +185,11 @@ const GameScreen = props => {
             currentImage={currentImage}
             onTimeOver={onTimeOver}
           />
-          <GamePanel currentImage={currentImage} onAnswer={onAnswer} />
+          <GamePanel
+            currentImage={currentImage}
+            currentRef={currentRef.current}
+            onAnswer={onAnswer}
+          />
         </div>}
 
       {gameStatus === GAME_END &&

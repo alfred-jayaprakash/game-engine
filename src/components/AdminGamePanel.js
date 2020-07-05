@@ -12,10 +12,12 @@ import {
 import GameEngine from '../utils/GameEngine';
 
 const WAITING_STATUS = 'wait';
-const GAME_START = 'start';
-const GAME_END = 'end';
-
-const GAME_ADMIN_USER = 'Game Admin';
+const {
+  GAME_START,
+  GAME_PROGRESS,
+  GAME_END,
+  GAME_ADMIN_USER,
+} = require ('../utils/GlobalConfig');
 
 const AdminGamePanel = props => {
   const [users, setUsers] = useState ([]);

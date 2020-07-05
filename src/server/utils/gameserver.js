@@ -1,18 +1,17 @@
 const gameroom = require ('./gameroom');
 const gameengine = require ('./gameengine');
-
-const JOIN_EVENT = 'join';
-const GAME_STATUS_EVENT = 'game_status';
-const DISCONNECT_EVENT = 'disconnect';
-const ROOM_DATA_EVENT = 'room_data';
-const STATE_EVENT = 'state';
-
-const GAME_START = 'start';
-const GAME_PROGRESS = 'run';
-const GAME_END = 'end';
-
-const MAXIMUM_USER_SIZE = 20;
-const GAME_ADMIN_USER = 'Game Admin';
+const {
+  JOIN_EVENT,
+  GAME_STATUS_EVENT,
+  DISCONNECT_EVENT,
+  ROOM_DATA_EVENT,
+  STATE_EVENT,
+  GAME_START,
+  GAME_PROGRESS,
+  GAME_END,
+  MAXIMUM_USER_SIZE,
+  GAME_ADMIN_USER,
+} = require ('../../utils/GlobalConfig');
 
 //
 // Connect handler: Handle client connect events
@@ -37,7 +36,6 @@ const handleNewConnection = (io, socket) => {
 //
 const handleJoin = (options, callback, socket, io) => {
   const {error, user} = gameroom.addUser ({id: socket.id, ...options});
-
   if (error) {
     //If error, return straightaway
     return callback (error, null);
@@ -57,36 +55,28 @@ const handleJoin = (options, callback, socket, io) => {
 };
 
 //
-// Disconnect handler: Handle disconnect events
-//
-const handleDisconnect = (socket, io) => {
-  const user = gameroom.removeUser (socket.id);
-  if (user) {
-    console.log ('Received disconnect and broadcasting to everyone', user);
-    io.to (user.room).emit (ROOM_DATA_EVENT, {
-      room: user.room,
-      users: gameroom.getUsersInRoom (user.room),
-    }); //Send the updated user list
-  }
-};
-
-//
 // Game Status handler: Handle game status change events
 //
-const handleGameStatus = (game_state_data, callback, socket, io) => {
-  console.log ('Received game status data in gameserver.js', game_state_data);
-  let roomId = game_state_data.room;
-  let room = gameroom.getRoom (parseInt (roomId));
-  if (room === null || room.users === null) return; //Invalid state
-  let current_user = room.users.find (user => user.id === socket.id);
-  game_state_data.room = room; //Overwrite room data in to the data structure
-  game_state_data.user = current_user; //Set the current user data
-  game_state_data.update_data = null;
-  game_state_data.update_users = null;
+const handleGameStatus = (client_game_state_data, callback, socket, io) => {
+  console.log (
+    'Received game status data in gameserver.js',
+    client_game_state_data
+  );
+  let {room: roomId, status} = client_game_state_data;
+  let current_room = gameroom.getRoom (parseInt (roomId));
+  if (current_room === null || current_room.users === null) return; //Invalid state
+  let current_user = current_room.users.find (user => user.id === socket.id);
 
-  if (room) {
+  const game_state_data = {
+    status,
+    room: current_room,
+    user: current_user,
+    state: client_game_state_data.state,
+  };
+
+  if (current_room) {
     let game_engine_response = null;
-    switch (game_state_data.status) {
+    switch (status) {
       case GAME_START:
         game_engine_response = gameengine.handleGameStart (game_state_data);
         break;
@@ -101,6 +91,7 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
     // If there is any update data sent to specific set of users
     //
     if (game_state_data.update_users && game_state_data.update_data) {
+      console.log ('Contained update users', game_state_data);
       game_state_data.update_users.forEach (socketId => {
         io.to (socketId).emit (STATE_EVENT, game_state_data.update_data);
       });
@@ -132,4 +123,23 @@ const handleGameStatus = (game_state_data, callback, socket, io) => {
   }
 };
 
-module.exports = {handleNewConnection, handleDisconnect};
+//
+// Disconnect handler: Handle disconnect events
+//
+const handleDisconnect = (socket, io) => {
+  const user = gameroom.removeUser (socket.id);
+  if (user) {
+    console.log ('Received disconnect and broadcasting to everyone', user);
+    io.to (user.room).emit (ROOM_DATA_EVENT, {
+      room: user.room,
+      users: gameroom.getUsersInRoom (user.room),
+    }); //Send the updated user list
+  }
+};
+
+module.exports = {
+  handleNewConnection,
+  handleJoin,
+  handleGameStatus,
+  handleDisconnect,
+};

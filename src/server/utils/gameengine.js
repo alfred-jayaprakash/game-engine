@@ -1,4 +1,5 @@
 const photoengine = require ('./photoengine');
+const {DEFAULT_SCORE} = require ('../../utils/GlobalConfig');
 
 //
 // Handle game initialization
@@ -62,13 +63,14 @@ const handleGameProgress = game_state_data => {
     let answered_users = ref_ans_data.get (answer.toLowerCase ());
     let users_to_update_state = [];
     if (answered_users == null) {
+      //No one answered yet
       console.log ('No data for answer yet = ', answer);
       answered_users = [];
       answered_users.push (current_user.username); //Add the username to the list of answered users
       ref_ans_data.set (answer.toLowerCase (), answered_users); //Set this data in reference ans data
-      users_to_update_state.push (current_user.id); //Users who should receive the new state
+      //users_to_update_state.push (current_user.id); //Users who should receive the new state
     } else {
-      //Answers was already answered
+      //Given guess was already guessed by another user
       console.log ('Given answer was already provided = ', answer);
       answered_users.push (current_user.username); //Add the user to list of users
       answered_users.forEach (username => {
@@ -81,18 +83,19 @@ const handleGameProgress = game_state_data => {
           //   'had previously provided answer ',
           //   answer
           // );
-          answered_user.score += 100; //Add 100 for each of the users
+          answered_user.score += DEFAULT_SCORE; //Add score for each of the users
           users_to_update_state.push (answered_user.id); //Users who should receive the new state
         }
       });
-    }
-    //Update the answer to be sent along with the users that got same answer
-    game_state_data.update_data = {
-      answer: answer.toLowerCase (),
-      users: answered_users,
-    };
+      //Update the answer to be sent along with the users that got same answer
+      game_state_data.update_data = {
+        ref: gamestate.ref,
+        answer: answer.toLowerCase (),
+        users: answered_users,
+      };
 
-    game_state_data.update_users = users_to_update_state; //Set the users that need to be updated with the new state
+      game_state_data.update_users = users_to_update_state; //Set the users that need to be updated with the new state
+    }
   } else {
     console.log ('No answer was provided. Hence nothing to process.');
   }

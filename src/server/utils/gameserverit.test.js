@@ -4,15 +4,16 @@ const serverio = require ('socket.io');
 const {handleNewConnection} = require ('./gameserver');
 const gameroom = require ('./gameroom');
 
-const JOIN_EVENT = 'join';
-const GAME_STATUS_EVENT = 'game_status';
-const DISCONNECT_EVENT = 'disconnect';
-const ROOM_DATA_EVENT = 'room_data';
-const STATE_EVENT = 'state';
-
-const GAME_START = 'start';
-const GAME_PROGRESS = 'run';
-const GAME_END = 'end';
+const {
+  JOIN_EVENT,
+  GAME_STATUS_EVENT,
+  DISCONNECT_EVENT,
+  ROOM_DATA_EVENT,
+  STATE_EVENT,
+  GAME_START,
+  GAME_PROGRESS,
+  GAME_END,
+} = require ('../../utils/GlobalConfig');
 
 let httpServer;
 let httpServerAddr;
