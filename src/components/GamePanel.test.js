@@ -188,4 +188,48 @@ describe ('Functional tests', () => {
     expect (onAnswer.mock.calls[0][0]).toBe ('one'); //First time should be 'one'
     expect (onAnswer.mock.calls[1][0]).toBe ('two'); //Second time should be 'two'
   });
+
+  test ('new image should clear previous answers', async () => {
+    const {queryByText, rerender, getByPlaceholderText} = render (
+      <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
+      container
+    );
+
+    let guessInput = getByPlaceholderText ('Type your word');
+    let submitButton = screen.queryByText ('Submit');
+
+    userEvent.type (guessInput, 'one');
+    fireEvent.click (submitButton);
+
+    userEvent.type (guessInput, 'two');
+    fireEvent.click (submitButton);
+
+    userEvent.type (guessInput, 'three');
+    fireEvent.click (submitButton);
+
+    expect (queryByText ('one')).toBeInTheDocument ();
+    expect (queryByText ('two')).toBeInTheDocument ();
+    expect (queryByText ('three')).toBeInTheDocument ();
+
+    // re-render with different image
+    let newImageUrl = './2.jpg';
+    rerender (<GamePanel currentImage={newImageUrl} onAnswer={onAnswer} />);
+    expect (queryByText ('one')).not.toBeInTheDocument ();
+
+    // guessInput = getByPlaceholderText ('Type your word');
+    // submitButton = screen.queryByText ('Submit');
+
+    // userEvent.type (guessInput, 'north');
+    // fireEvent.click (submitButton);
+
+    // userEvent.type (guessInput, 'south');
+    // fireEvent.click (submitButton);
+
+    // userEvent.type (guessInput, 'west');
+    // fireEvent.click (submitButton);
+    // // Again render with a different image
+    // newImageUrl = './3.jpg';
+    // rerender (<GamePanel currentImage={newImageUrl} onAnswer={onAnswer} />);
+    // expect (queryByText ('north')).not.toBeInTheDocument ();
+  });
 });

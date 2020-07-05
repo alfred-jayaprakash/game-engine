@@ -1,4 +1,10 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useReducer,
+  useLayoutEffect,
+} from 'react';
 import {
   Row,
   Col,
@@ -17,15 +23,32 @@ import {
 
 import GameEngine from '../utils/GameEngine';
 
+function reducer (answers, action) {
+  switch (action.type) {
+    case 'add':
+      //console.log ('add state called in reducer');
+      return [...answers, action.payload];
+    case 'update':
+      //console.log ('update state called in reducer');
+      return action.payload;
+    case 'clear':
+      //console.log ('clear state called in reducer');
+      return [];
+    default:
+      throw new Error ('Unknown action');
+  }
+}
+
 //
 // Main Game Panel
 // Props: Current Image
 //
 const GamePanel = props => {
   const [currentAnswer, setCurrentAnswer] = useState ('');
-  const [answers, setAnswers] = useState ([]);
+  //const [answers, setAnswers] = useState ([]);
   const [error, setError] = useState ('');
-  const gameStateRef = useRef ();
+  const gameStateRef = useRef ({});
+  const [answers, dispatch] = useReducer (reducer, []);
 
   //
   // One-time Initialization
@@ -43,12 +66,12 @@ const GamePanel = props => {
   useEffect (
     () => {
       //Clear all the user answers
-      setAnswers ([]);
+      dispatch ({type: 'clear'});
       setCurrentAnswer ('');
       setError ('');
       return () => {
         //Clear all the user answers
-        setAnswers ([]);
+        dispatch ({type: 'clear'});
       };
     }, // eslint-disable-next-line
     [props.currentImage]
@@ -57,8 +80,9 @@ const GamePanel = props => {
   //
   // Logic to handle hits whenever another user guess same words as us
   //
-  useEffect (
+  useLayoutEffect (
     () => {
+      //console.log ('useEffect to update scores has been triggered');
       if (gameStateRef && gameStateRef.current) {
         let state_data_answer = gameStateRef.current.answer;
         let users = gameStateRef.current.users;
@@ -72,7 +96,7 @@ const GamePanel = props => {
             }
             return value;
           });
-          if (answers) setAnswers (newAnswers);
+          dispatch ({type: 'update', payload: newAnswers});
         }
       }
       return () => {};
@@ -82,10 +106,10 @@ const GamePanel = props => {
 
   const handleGameStateChange = state_data => {
     //One-time initialization
-    console.log (
-      'Received game state change with hits from server in GamePanel',
-      state_data
-    );
+    // console.log (
+    //   'Received game state change with hits from server in GamePanel',
+    //   state_data
+    // );
     if (state_data) {
       //setGameState (state_data);
       gameStateRef.current = state_data;
@@ -111,13 +135,17 @@ const GamePanel = props => {
       return setError ('Word already guessed');
     }
 
-    setAnswers ([
-      ...answers,
-      {
-        answer: currentAnswer.toLowerCase (),
-        count: 1,
-      },
-    ]);
+    // setAnswers ([
+    //   ...answers,
+    //   {
+    //     answer: currentAnswer.toLowerCase (),
+    //     count: 1,
+    //   },
+    // ]);
+    dispatch ({
+      type: 'add',
+      payload: {answer: currentAnswer.toLowerCase (), count: 1},
+    });
 
     props.onAnswer (currentAnswer.toLowerCase ());
     setError ('');

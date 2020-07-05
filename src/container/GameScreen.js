@@ -82,12 +82,16 @@ const GameScreen = props => {
         if (data.state) {
           gameMetaDataRef.current = data.state;
           if (data.state.length > 0) {
+            console.log (
+              'Setting first image ',
+              counter.current,
+              data.state[counter.current].url
+            );
             setCurrentImage (data.state[counter.current].url);
             currentRef.current = data.state[counter.current].ref;
           }
         }
         if (data.config && data.config.time) {
-          console.log ('Setting duration as :', data.config.time);
           duration.current = data.config.time;
         }
         if (data.scores) {
@@ -129,10 +133,13 @@ const GameScreen = props => {
     console.log ('Timer has ended. Resetting time:', counter.current);
     let gameMetaData = gameMetaDataRef.current;
     if (counter.current < gameMetaData.length) {
-      console.log ('Switching to next image ', counter.current, gameMetaData);
       let newMetaData = gameMetaData[counter.current];
-      console.log ('Resetting the data to new data: ', newMetaData);
       currentRef.current = newMetaData.ref;
+      console.log (
+        'Switching to next image ',
+        counter.current,
+        newMetaData.url
+      );
       setCurrentImage (newMetaData.url); //Set the contents to the next data
     } else {
       console.log ('Finished all the questions. Closing');
@@ -149,7 +156,6 @@ const GameScreen = props => {
     }
   };
 
-  console.log ('Rendering GameScreen: ', currentImage);
   return (
     <Container
       className="flex-column justify-content-center bg-dark text-light vertical-center"
