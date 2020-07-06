@@ -177,7 +177,7 @@ const GameScreen = props => {
           </Col>
         </Row>}
 
-      {gameStatus === GAME_START &&
+      {(gameStatus === GAME_START || gameStatus === GAME_PROGRESS) &&
         <div>
           <ScorePanel score={score} />
           <TimerPanel

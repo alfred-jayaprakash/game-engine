@@ -118,6 +118,7 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
     });
 
     client_response.scores = scores; //Finally write the scores
+    console.log ('Sending response to all clients ', client_response);
 
     io.to (roomId).emit (GAME_STATUS_EVENT, client_response); //Send update game status to everyone
   }
