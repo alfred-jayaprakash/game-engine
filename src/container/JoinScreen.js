@@ -132,7 +132,10 @@ const JoinScreen = props => {
                   <FormGroup>
                     <Input
                       className="form-control form-control-lg p-4"
-                      type="number"
+                      type="tel"
+                      min="0"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       name="gameRoom"
                       id="gameRoom"
                       placeholder="Game Room ID"

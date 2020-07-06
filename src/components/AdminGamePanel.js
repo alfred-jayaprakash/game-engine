@@ -14,7 +14,6 @@ import GameEngine from '../utils/GameEngine';
 const WAITING_STATUS = 'wait';
 const {
   GAME_START,
-  GAME_PROGRESS,
   GAME_END,
   GAME_ADMIN_USER,
 } = require ('../utils/GlobalConfig');

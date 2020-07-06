@@ -78,10 +78,13 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
                   className="form-control form-control-lg p-4"
                   disabled={false}
                   id="gameRoom"
+                  inputMode="numeric"
+                  min="0"
                   name="gameRoom"
                   onChange={[Function]}
+                  pattern="[0-9]*"
                   placeholder="Game Room ID"
-                  type="number"
+                  type="tel"
                 />
               </FormGroup>
             </Col>
