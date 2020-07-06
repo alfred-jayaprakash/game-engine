@@ -172,7 +172,9 @@ describe ('Functional tests', () => {
 
     expect (roomSocketRef.emit).toHaveBeenCalled ();
     expect (roomSocketRef.emit.mock.calls[0][0]).toEqual (GAME_STATUS_EVENT);
-    expect (roomSocketRef.emit.mock.calls[0][1]).toBeTruthy ();
+    let start_response = roomSocketRef.emit.mock.calls[0][1];
+    expect (start_response).toBeTruthy ();
+    expect (start_response.status).toBe (GAME_START);
   });
 
   test ('Game progress message should trigger broadcast of game start to everyone in room', () => {

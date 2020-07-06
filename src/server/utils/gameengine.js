@@ -6,7 +6,6 @@ const {DEFAULT_SCORE} = require ('../../utils/GlobalConfig');
 //
 const handleGameInit = async (room, config) => {
   let photos = await photoengine.getPhotos (config.category, config.questions); //Get the list of photos from Photo Engine
-
   let idx = 1;
   let gameMetaData = photos.map (photo => ({url: photo, ref: idx++}));
   room.gameMetaData = gameMetaData;
@@ -54,7 +53,7 @@ const handleGameProgress = game_state_data => {
       ref_ans_data = new Map (); //List of all answers
       gamedata.set (gamestate.ref, ref_ans_data);
     } else {
-      console.log ('Game state found for ref');
+      console.log ('Game state found for ref ', gamestate.ref);
     }
 
     /**
@@ -88,13 +87,13 @@ const handleGameProgress = game_state_data => {
         }
       });
       //Update the answer to be sent along with the users that got same answer
-      game_state_data.update_data = {
+      game_engine_response.update_data = {
         ref: gamestate.ref,
         answer: answer.toLowerCase (),
         users: answered_users,
       };
 
-      game_state_data.update_users = users_to_update_state; //Set the users that need to be updated with the new state
+      game_engine_response.update_users = users_to_update_state; //Set the users that need to be updated with the new state
     }
   } else {
     console.log ('No answer was provided. Hence nothing to process.');

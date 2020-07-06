@@ -76,9 +76,12 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
 
   if (current_room) {
     let game_engine_response = null;
+    let client_response = {status};
     switch (status) {
       case GAME_START:
         game_engine_response = gameengine.handleGameStart (game_state_data);
+        client_response.config = game_engine_response.config; //Copy Game Config
+        client_response.state = game_engine_response.state; //Copy Game state
         break;
       case GAME_PROGRESS:
         game_engine_response = gameengine.handleGameProgress (game_state_data);
@@ -90,10 +93,10 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
     //
     // If there is any update data sent to specific set of users
     //
-    if (game_state_data.update_users && game_state_data.update_data) {
-      console.log ('Contained update users', game_state_data);
-      game_state_data.update_users.forEach (socketId => {
-        io.to (socketId).emit (STATE_EVENT, game_state_data.update_data);
+    if (game_engine_response.update_users && game_engine_response.update_data) {
+      console.log ('Contained update users', game_engine_response.update_users);
+      game_engine_response.update_users.forEach (socketId => {
+        io.to (socketId).emit (STATE_EVENT, game_engine_response.update_data);
       });
     }
 
@@ -113,13 +116,10 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
         });
       }
     });
-    game_engine_response.scores = scores; //Set the current scores in the game engine response
 
-    // console.log (
-    //   'Game status response to be broadcasted to everyone ',
-    //   game_engine_response
-    // );
-    io.to (roomId).emit (GAME_STATUS_EVENT, game_engine_response); //Send update game status to everyone
+    client_response.scores = scores; //Finally write the scores
+
+    io.to (roomId).emit (GAME_STATUS_EVENT, client_response); //Send update game status to everyone
   }
 };
 
