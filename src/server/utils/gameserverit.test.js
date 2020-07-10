@@ -23,6 +23,10 @@ let firstClientSocket;
 let secondClientSocket;
 let timeout = 20 * 1000;
 
+const SERVER_HOST = '127.0.0.1';
+const SERVER_PORT = 8080;
+const JEST_TIMEOUT = 10000;
+
 describe ('Integration tests', () => {
   /**
  * Setup WS & HTTP servers
@@ -32,7 +36,7 @@ describe ('Integration tests', () => {
     jest.setTimeout (timeout);
 
     //Setup the Socket.IO Server
-    httpServer = http.createServer ().listen (8080);
+    httpServer = http.createServer ().listen (SERVER_PORT);
     httpServerAddr = httpServer.address ();
     console.log ('Integration test server running in ', httpServerAddr);
     ioServer = serverio (httpServer);
@@ -66,7 +70,6 @@ describe ('Integration tests', () => {
  */
   beforeEach (done => {
     // Setup
-    // Do not hardcode server port and address, square brackets are used for IPv6
     let clientSocketConnected = true;
     let anotherSocketConnected = true;
 
@@ -84,7 +87,7 @@ describe ('Integration tests', () => {
 
     setTimeout (() => {
       if (clientSocketConnected && anotherSocketConnected) done ();
-    }, 10000);
+    }, JEST_TIMEOUT);
   }, timeout);
 
   /**
@@ -105,7 +108,7 @@ describe ('Integration tests', () => {
 
   const createClient = () => {
     // Do not hardcode server port and address, square brackets are used for IPv6
-    return clientio.connect (`http://127.0.0.1:${httpServerAddr.port}`, {
+    return clientio.connect (`http://${SERVER_HOST}:${SERVER_PORT}`, {
       'reconnection delay': 0,
       'reopen delay': 0,
       'force new connection': true,
@@ -206,7 +209,7 @@ describe ('Integration tests', () => {
             setTimeout (() => {
               expect (testRoom.users.length).toEqual (1);
               done ();
-            }, 10000);
+            }, JEST_TIMEOUT);
           }
         );
       }
@@ -246,7 +249,187 @@ describe ('Integration tests', () => {
               expect (firstClientReceivedStart).toBeTruthy ();
               expect (secondClientReceivedStart).toBeTruthy ();
               done ();
-            }, 10000);
+            }, JEST_TIMEOUT);
+          }
+        );
+      }
+    );
+  });
+
+  test ('able to send a game progress with different responses', done => {
+    let firstClientReceivedProgress = false;
+    firstClientSocket.on (GAME_STATUS_EVENT, data => {
+      if (data && data.scores) firstClientReceivedProgress = true;
+    });
+
+    let secondClientReceivedProgress = false;
+    secondClientSocket.on (GAME_STATUS_EVENT, data => {
+      if (data && data.scores) secondClientReceivedProgress = true;
+    });
+
+    joinRoom (
+      firstClientSocket,
+      {username: 'AJ', room: testRoom.id},
+      (error, data) => {
+        //Now join as second client
+        joinRoom (
+          secondClientSocket,
+          {username: 'John', room: testRoom.id},
+          (error, data) => {
+            //Both clients joined
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              //Send a start event
+              status: GAME_START,
+              room: testRoom.id,
+            });
+
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_PROGRESS,
+              room: testRoom.id,
+              state: {
+                ref: 1,
+                response: 'one',
+              },
+            });
+
+            secondClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_PROGRESS,
+              room: testRoom.id,
+              state: {
+                ref: 1,
+                response: 'two',
+              },
+            });
+
+            // Use timeout to wait for socket.io server handshakes
+            setTimeout (() => {
+              expect (firstClientReceivedProgress).toBeTruthy ();
+              expect (secondClientReceivedProgress).toBeTruthy ();
+              done ();
+            }, JEST_TIMEOUT);
+          }
+        );
+      }
+    );
+  });
+
+  test ('able to send a game progress with same responses', done => {
+    let firstClientReceivedProgress = false;
+    firstClientSocket.on (STATE_EVENT, data => {
+      if (data && data.ref) firstClientReceivedProgress = true;
+    });
+
+    let secondClientReceivedProgress = false;
+    secondClientSocket.on (STATE_EVENT, data => {
+      if (data && data.ref) secondClientReceivedProgress = true;
+    });
+
+    joinRoom (
+      firstClientSocket,
+      {username: 'AJ', room: testRoom.id},
+      (error, data) => {
+        //Now join as second client
+        joinRoom (
+          secondClientSocket,
+          {username: 'John', room: testRoom.id},
+          (error, data) => {
+            //Both clients joined
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              //Send a start event
+              status: GAME_START,
+              room: testRoom.id,
+            });
+
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_PROGRESS,
+              room: testRoom.id,
+              state: {
+                ref: 2,
+                response: 'three',
+              },
+            });
+
+            secondClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_PROGRESS,
+              room: testRoom.id,
+              state: {
+                ref: 2,
+                response: 'three',
+              },
+            });
+
+            // Use timeout to wait for socket.io server handshakes
+            setTimeout (() => {
+              expect (firstClientReceivedProgress).toBeTruthy ();
+              expect (secondClientReceivedProgress).toBeTruthy ();
+              done ();
+            }, JEST_TIMEOUT);
+          }
+        );
+      }
+    );
+  });
+
+  test ('able to send a game end data', done => {
+    let firstClientReceivedProgress, secondClientReceivedProgress = false;
+    joinRoom (
+      firstClientSocket,
+      {username: 'AJ', room: testRoom.id},
+      (error, data) => {
+        //Now join as second client
+        joinRoom (
+          secondClientSocket,
+          {username: 'John', room: testRoom.id},
+          (error, data) => {
+            //Both clients joined
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              //Send a start event
+              status: GAME_START,
+              room: testRoom.id,
+            });
+
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_PROGRESS,
+              room: testRoom.id,
+              state: {
+                ref: 3,
+                response: 'one',
+              },
+            });
+
+            secondClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_PROGRESS,
+              room: testRoom.id,
+              state: {
+                ref: 3,
+                response: 'two',
+              },
+            });
+
+            firstClientSocket.on (GAME_STATUS_EVENT, data => {
+              if (data && data.scores) firstClientReceivedProgress = true;
+            });
+
+            secondClientSocket.on (GAME_STATUS_EVENT, data => {
+              if (data && data.scores) secondClientReceivedProgress = true;
+            });
+
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_END,
+              room: testRoom.id,
+            });
+
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_END,
+              room: testRoom.id,
+            });
+
+            // Use timeout to wait for socket.io server handshakes
+            setTimeout (() => {
+              expect (firstClientReceivedProgress).toBeTruthy ();
+              expect (secondClientReceivedProgress).toBeTruthy ();
+              done ();
+            }, JEST_TIMEOUT);
           }
         );
       }
