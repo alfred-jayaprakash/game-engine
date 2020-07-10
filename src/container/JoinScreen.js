@@ -14,7 +14,6 @@ import {
   TabPane,
   TabContent,
 } from 'reactstrap';
-import {useHistory} from 'react-router-dom';
 import axios from 'axios';
 import classnames from 'classnames';
 
@@ -25,7 +24,6 @@ const JoinScreen = props => {
   const [user, setUser] = useState ('');
   const [error, setError] = useState ('');
   const [roomValidated, setValidated] = useState (false);
-  const history = useHistory ();
   const [activeTab, setActiveTab] = useState ('1');
   const [adminUser, setAdminUser] = useState ('');
   const [adminPass, setAdminPass] = useState ('');
@@ -41,7 +39,7 @@ const JoinScreen = props => {
     }
 
     if (adminUser === 'phantomsg@icloud.com' && adminPass === 'gameninja') {
-      history.push ('/admin'); //Show admin screen
+      props.history.push ('/admin'); //Show admin screen
     } else {
       return setLoginError ('Invalid logon');
     }
@@ -82,7 +80,7 @@ const JoinScreen = props => {
             return setError (res.data.error);
           }
           console.log ('Validation successful and pushing data ', user, room);
-          history.push ({
+          props.history.push ({
             pathname: '/game',
             state: {
               user,
@@ -168,7 +166,7 @@ const JoinScreen = props => {
                       onClick={onSubmit}
                       className="btn-lg btn-block"
                     >
-                      {roomValidated ? 'Join' : 'Next'}
+                      {roomValidated ? 'Enter' : 'Next'}
                     </Button>
                   </FormGroup>
                 </Col>

@@ -1,17 +1,14 @@
 import React from 'react';
-import {render, fireEvent, screen, act, waitFor} from '@testing-library/react';
+import {render, fireEvent, screen, act} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {shallow} from 'enzyme';
 import GamePanel from './GamePanel';
+jest.mock ('../utils/GameEngine');
 import GameEngine from '../utils/GameEngine';
 
-let onAnswer;
-let container;
-const imageUrl = './1.jpg';
 describe ('Snapshot tests', () => {
   beforeAll (() => {
     //ARRANGE
-    GameEngine.connect ();
   });
 
   test ('should render correctly without issues', () => {
@@ -24,10 +21,17 @@ describe ('Snapshot tests', () => {
   });
 });
 
+let onAnswer;
+let container;
+const imageUrl = './1.jpg';
+let gameStateCallback;
+
 describe ('Functional tests', () => {
   beforeAll (() => {
-    //ARRANGE
-    GameEngine.connect ();
+    GameEngine.registerForGameStateUpdates.mockImplementation (
+      callback => (gameStateCallback = callback)
+    );
+
     onAnswer = jest.fn ();
   });
 
@@ -189,6 +193,46 @@ describe ('Functional tests', () => {
     expect (onAnswer.mock.calls[1][0]).toBe ('two'); //Second time should be 'two'
   });
 
+  test ('state update with hits for a guess should properly render', () => {
+    let stateRef = 1;
+    const {rerender, getByPlaceholderText} = render (
+      <GamePanel
+        currentImage={imageUrl}
+        onAnswer={onAnswer}
+        currentRef={stateRef}
+      />,
+      container
+    );
+
+    let guessInput = getByPlaceholderText ('Type your word');
+    let submitButton = screen.queryByText ('Submit');
+
+    userEvent.type (guessInput, 'one');
+    fireEvent.click (submitButton);
+
+    userEvent.type (guessInput, 'two');
+    fireEvent.click (submitButton);
+
+    //Now send a mock status update from server
+    gameStateCallback ({
+      answer: 'one',
+      ref: stateRef,
+      users: ['A', 'B', 'C'],
+    });
+
+    // Hack to force a rerender and thus call useLayoutEffect
+    rerender (
+      <GamePanel
+        currentImage={imageUrl}
+        onAnswer={onAnswer}
+        currentRef={stateRef}
+      />
+    );
+
+    // Hits should be reflected in the screen as a badge
+    expect (screen.getByText ('3')).toBeInTheDocument ();
+  });
+
   test ('new image should clear previous answers', async () => {
     const {queryByText, rerender, getByPlaceholderText} = render (
       <GamePanel currentImage={imageUrl} onAnswer={onAnswer} />,
@@ -215,21 +259,5 @@ describe ('Functional tests', () => {
     let newImageUrl = './2.jpg';
     rerender (<GamePanel currentImage={newImageUrl} onAnswer={onAnswer} />);
     expect (queryByText ('one')).not.toBeInTheDocument ();
-
-    // guessInput = getByPlaceholderText ('Type your word');
-    // submitButton = screen.queryByText ('Submit');
-
-    // userEvent.type (guessInput, 'north');
-    // fireEvent.click (submitButton);
-
-    // userEvent.type (guessInput, 'south');
-    // fireEvent.click (submitButton);
-
-    // userEvent.type (guessInput, 'west');
-    // fireEvent.click (submitButton);
-    // // Again render with a different image
-    // newImageUrl = './3.jpg';
-    // rerender (<GamePanel currentImage={newImageUrl} onAnswer={onAnswer} />);
-    // expect (queryByText ('north')).not.toBeInTheDocument ();
   });
 });

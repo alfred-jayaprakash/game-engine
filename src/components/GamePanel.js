@@ -29,7 +29,7 @@ function reducer (answers, action) {
       //console.log ('add state called in reducer');
       return [...answers, action.payload];
     case 'update':
-      //console.log ('update state called in reducer');
+      // console.log ('update state called in reducer');
       return action.payload;
     case 'clear':
       //console.log ('clear state called in reducer');
@@ -47,7 +47,7 @@ const GamePanel = props => {
   const [currentAnswer, setCurrentAnswer] = useState ('');
   //const [answers, setAnswers] = useState ([]);
   const [error, setError] = useState ('');
-  const gameStateRef = useRef ({});
+  const gameStateRef = useRef ();
   const [answers, dispatch] = useReducer (reducer, []);
 
   //
@@ -82,12 +82,14 @@ const GamePanel = props => {
   //
   useLayoutEffect (
     () => {
-      //console.log ('useEffect to update scores has been triggered');
+      // console.log (
+      //   'useLayoutEffect to update scores has been triggered',
+      //   gameStateRef.current
+      // );
       if (gameStateRef && gameStateRef.current) {
         let state_data_answer = gameStateRef.current.answer;
         let users = gameStateRef.current.users;
         let receivedRef = gameStateRef.current.ref;
-
         if (state_data_answer && receivedRef === props.currentRef) {
           let newAnswers = answers.map (value => {
             //Update the Answers with new count
