@@ -133,7 +133,7 @@ describe ('Integration tests', () => {
   });
 
   test ('able to join a valid room', done => {
-    let username = 'AJ';
+    let username = 'Alan';
     joinRoom (
       firstClientSocket,
       {username, room: testRoom.id},
@@ -147,10 +147,17 @@ describe ('Integration tests', () => {
   });
 
   test ('unable to join a valid room with same id', done => {
-    let username = 'AJ';
+    //Setup a Game room
+    let newRoom = gameroom.createRoom ('Jest1');
+    newRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
+
+    let username = 'Bob';
     joinRoom (
       firstClientSocket,
-      {username, room: testRoom.id},
+      {username, room: newRoom.id},
       (error, data) => {
         expect (error).toBeFalsy ();
         expect (data).toBeTruthy ();
@@ -158,11 +165,11 @@ describe ('Integration tests', () => {
         //Now join as second client
         joinRoom (
           secondClientSocket,
-          {username, room: testRoom.id},
+          {username, room: newRoom.id},
           (error, data) => {
             expect (data).toBeFalsy ();
             expect (error).toBeTruthy ();
-            expect (testRoom.users.length).toEqual (1); //There should be 1 users now
+            expect (newRoom.users.length).toEqual (1); //There should be 1 users now
             done ();
           }
         );
@@ -171,9 +178,15 @@ describe ('Integration tests', () => {
   });
 
   test ('able to join a valid room with different id', done => {
+    //Setup a Game room
+    let newRoom = gameroom.createRoom ('Jest1');
+    newRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
     joinRoom (
       firstClientSocket,
-      {username: 'AJ', room: testRoom.id},
+      {username: 'Carl', room: newRoom.id},
       (error, data) => {
         expect (error).toBeFalsy ();
         expect (data).toBeTruthy ();
@@ -181,11 +194,11 @@ describe ('Integration tests', () => {
         //Now join as second client
         joinRoom (
           secondClientSocket,
-          {username: 'John', room: testRoom.id},
+          {username: 'Dave', room: newRoom.id},
           (error, data) => {
             expect (error).toBeFalsy ();
             expect (data).toBeTruthy ();
-            expect (testRoom.users.length).toEqual (2); //There should be 2 users now
+            expect (newRoom.users.length).toEqual (2); //There should be 2 users now
             done ();
           }
         );
@@ -194,20 +207,30 @@ describe ('Integration tests', () => {
   });
 
   test ('able to disconnect', done => {
+    //Setup a Game room
+    let newRoom = gameroom.createRoom ('Jest1');
+    newRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
+
     joinRoom (
       firstClientSocket,
-      {username: 'AJ', room: testRoom.id},
+      {username: 'AJ', room: newRoom.id},
       (error, data) => {
         //Now join as second client
         joinRoom (
           secondClientSocket,
-          {username: 'John', room: testRoom.id},
+          {username: 'John', room: newRoom.id},
           (error, data) => {
             secondClientSocket.disconnect ();
 
             // Use timeout to wait for socket.io server handshakes
             setTimeout (() => {
-              expect (testRoom.users.length).toEqual (1);
+              console.log (newRoom.users);
+              expect (newRoom.users.length).toEqual (2); //Should remain two
+              expect (newRoom.users[0].active).toBe (true);
+              expect (newRoom.users[1].active).toBe (false);
               done ();
             }, JEST_TIMEOUT);
           }
@@ -217,6 +240,13 @@ describe ('Integration tests', () => {
   });
 
   test ('able to start a new game', done => {
+    //Setup a Game room
+    let newRoom = gameroom.createRoom ('Jest1');
+    newRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
+
     let firstClientReceivedStart = false;
     firstClientSocket.on (GAME_STATUS_EVENT, data => {
       if (data && data.status === GAME_START && data.config)
@@ -231,18 +261,18 @@ describe ('Integration tests', () => {
 
     joinRoom (
       firstClientSocket,
-      {username: 'AJ', room: testRoom.id},
+      {username: 'Eng', room: newRoom.id},
       (error, data) => {
         //Now join as second client
         joinRoom (
           secondClientSocket,
-          {username: 'John', room: testRoom.id},
+          {username: 'Frank', room: newRoom.id},
           (error, data) => {
             //Both clients joined
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               //Send a start event
               status: GAME_START,
-              room: testRoom.id,
+              room: newRoom.id,
             });
             // Use timeout to wait for socket.io server handshakes
             setTimeout (() => {
@@ -257,6 +287,13 @@ describe ('Integration tests', () => {
   });
 
   test ('able to send a game progress with different responses', done => {
+    //Setup a Game room
+    let newRoom = gameroom.createRoom ('Jest1');
+    newRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
+
     let firstClientReceivedProgress = false;
     firstClientSocket.on (GAME_STATUS_EVENT, data => {
       if (data && data.scores) firstClientReceivedProgress = true;
@@ -269,23 +306,23 @@ describe ('Integration tests', () => {
 
     joinRoom (
       firstClientSocket,
-      {username: 'AJ', room: testRoom.id},
+      {username: 'AJ', room: newRoom.id},
       (error, data) => {
         //Now join as second client
         joinRoom (
           secondClientSocket,
-          {username: 'John', room: testRoom.id},
+          {username: 'John', room: newRoom.id},
           (error, data) => {
             //Both clients joined
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               //Send a start event
               status: GAME_START,
-              room: testRoom.id,
+              room: newRoom.id,
             });
 
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               status: GAME_PROGRESS,
-              room: testRoom.id,
+              room: newRoom.id,
               state: {
                 ref: 1,
                 response: 'one',
@@ -294,7 +331,7 @@ describe ('Integration tests', () => {
 
             secondClientSocket.emit (GAME_STATUS_EVENT, {
               status: GAME_PROGRESS,
-              room: testRoom.id,
+              room: newRoom.id,
               state: {
                 ref: 1,
                 response: 'two',
@@ -314,6 +351,13 @@ describe ('Integration tests', () => {
   });
 
   test ('able to send a game progress with same responses', done => {
+    //Setup a Game room
+    let newRoom = gameroom.createRoom ('Jest2');
+    newRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
+
     let firstClientReceivedProgress = false;
     firstClientSocket.on (STATE_EVENT, data => {
       if (data && data.ref) firstClientReceivedProgress = true;
@@ -326,23 +370,23 @@ describe ('Integration tests', () => {
 
     joinRoom (
       firstClientSocket,
-      {username: 'AJ', room: testRoom.id},
+      {username: 'AJ', room: newRoom.id},
       (error, data) => {
         //Now join as second client
         joinRoom (
           secondClientSocket,
-          {username: 'John', room: testRoom.id},
+          {username: 'John', room: newRoom.id},
           (error, data) => {
             //Both clients joined
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               //Send a start event
               status: GAME_START,
-              room: testRoom.id,
+              room: newRoom.id,
             });
 
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               status: GAME_PROGRESS,
-              room: testRoom.id,
+              room: newRoom.id,
               state: {
                 ref: 2,
                 response: 'three',
@@ -351,7 +395,7 @@ describe ('Integration tests', () => {
 
             secondClientSocket.emit (GAME_STATUS_EVENT, {
               status: GAME_PROGRESS,
-              room: testRoom.id,
+              room: newRoom.id,
               state: {
                 ref: 2,
                 response: 'three',
@@ -371,26 +415,33 @@ describe ('Integration tests', () => {
   });
 
   test ('able to send a game end data', done => {
+    //Setup a Game room
+    let newRoom = gameroom.createRoom ('Jest2');
+    newRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
+
     let firstClientReceivedProgress, secondClientReceivedProgress = false;
     joinRoom (
       firstClientSocket,
-      {username: 'AJ', room: testRoom.id},
+      {username: 'AJ', room: newRoom.id},
       (error, data) => {
         //Now join as second client
         joinRoom (
           secondClientSocket,
-          {username: 'John', room: testRoom.id},
+          {username: 'John', room: newRoom.id},
           (error, data) => {
             //Both clients joined
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               //Send a start event
               status: GAME_START,
-              room: testRoom.id,
+              room: newRoom.id,
             });
 
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               status: GAME_PROGRESS,
-              room: testRoom.id,
+              room: newRoom.id,
               state: {
                 ref: 3,
                 response: 'one',
@@ -399,7 +450,7 @@ describe ('Integration tests', () => {
 
             secondClientSocket.emit (GAME_STATUS_EVENT, {
               status: GAME_PROGRESS,
-              room: testRoom.id,
+              room: newRoom.id,
               state: {
                 ref: 3,
                 response: 'two',
@@ -416,12 +467,12 @@ describe ('Integration tests', () => {
 
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               status: GAME_END,
-              room: testRoom.id,
+              room: newRoom.id,
             });
 
             firstClientSocket.emit (GAME_STATUS_EVENT, {
               status: GAME_END,
-              room: testRoom.id,
+              room: newRoom.id,
             });
 
             // Use timeout to wait for socket.io server handshakes

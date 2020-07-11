@@ -16,6 +16,7 @@ const {
   GAME_START,
   GAME_END,
   GAME_ADMIN_USER,
+  GAME_PROGRESS,
 } = require ('../utils/GlobalConfig');
 
 const AdminGamePanel = props => {
@@ -109,16 +110,27 @@ const AdminGamePanel = props => {
             <ToastBody>
               <Table>
                 <tbody>
-                  {gameStatus === WAITING_STATUS &&
+                  {users &&
+                    gameStatus === WAITING_STATUS &&
                     users.map (user => (
-                      <tr key="{user.id}">
-                        <td>{user.username}</td>
+                      <tr key={user.username}>
+                        <td
+                          className={
+                            user.active === true
+                              ? 'text-primary'
+                              : 'text-danger'
+                          }
+                        >
+                          {user.username}
+                        </td>
                       </tr>
                     ))}
 
-                  {(gameStatus === GAME_START || gameStatus === GAME_END) &&
+                  {(gameStatus === GAME_START ||
+                    gameStatus === GAME_PROGRESS ||
+                    gameStatus === GAME_END) &&
                     gameScores.map (({user, score}) => (
-                      <tr key="{user.id}">
+                      <tr key={user}>
                         <td>{user}</td>
                         <td>{score}</td>
                       </tr>

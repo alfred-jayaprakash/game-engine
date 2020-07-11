@@ -34,8 +34,8 @@ const handleNewConnection = (io, socket) => {
 //
 // Join handler: Handle join events
 //
-const handleJoin = (options, callback, socket, io) => {
-  const {error, user} = gameroom.addUser ({id: socket.id, ...options});
+const handleJoin = (client_data, callback, socket, io) => {
+  const {error, user} = gameroom.addUser ({id: socket.id, ...client_data});
   if (error) {
     //If error, return straightaway
     return callback (error, null);
@@ -43,7 +43,10 @@ const handleJoin = (options, callback, socket, io) => {
   let roomUsers = gameroom.getUsersInRoom (user.room);
   if (roomUsers.length > MAXIMUM_USER_SIZE)
     roomUsers = roomUsers.slice (0, MAXIMUM_USER_SIZE);
-
+  //Dilute the list by removing unwanted attributes
+  roomUsers = roomUsers.map (({username, score, active}) => {
+    return {username, score, active};
+  });
   socket.join (user.room, () => {
     io.to (user.room).emit (ROOM_DATA_EVENT, {
       //Send updated user list
@@ -66,7 +69,7 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
   let current_room = gameroom.getRoom (parseInt (roomId));
   if (current_room === null || current_room.users === null) return; //Invalid state
   let current_user = current_room.users.find (user => user.id === socket.id);
-
+  current_user.active = true; //Since current user is send data, let's set him active
   const game_state_data = {
     status,
     room: current_room,
@@ -82,12 +85,16 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
         game_engine_response = gameengine.handleGameStart (game_state_data);
         client_response.config = game_engine_response.config; //Copy Game Config
         client_response.state = game_engine_response.state; //Copy Game state
+        //Now set the current room to Game started
+        current_room.status = GAME_PROGRESS;
         break;
       case GAME_PROGRESS:
         game_engine_response = gameengine.handleGameProgress (game_state_data);
         break;
       default:
         game_engine_response = gameengine.handleGameEnd (game_state_data);
+        //Now set the current room to Game ended
+        current_room.status = GAME_END;
         break;
     }
     //
@@ -128,12 +135,19 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
 // Disconnect handler: Handle disconnect events
 //
 const handleDisconnect = (socket, io) => {
-  const user = gameroom.removeUser (socket.id);
+  const user = gameroom.getUser (socket.id);
   if (user) {
-    console.log ('Received disconnect and broadcasting to everyone', user);
+    console.log (user.username, 'lost connection to server');
+    user.active = false; //Set the user as inactive
+    //Dilute the response sent
+    let users = gameroom
+      .getUsersInRoom (user.room)
+      .map (({username, score, active}) => {
+        return {username, score, active};
+      });
     io.to (user.room).emit (ROOM_DATA_EVENT, {
       room: user.room,
-      users: gameroom.getUsersInRoom (user.room),
+      users,
     }); //Send the updated user list
   }
 };

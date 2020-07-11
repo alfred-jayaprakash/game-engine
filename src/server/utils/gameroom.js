@@ -1,3 +1,5 @@
+const {GAME_PROGRESS, GAME_END} = require ('../../utils/GlobalConfig');
+
 const rooms = new Map ();
 
 const genRoomId = () => Math.floor (100000 + Math.random () * 900000);
@@ -74,6 +76,14 @@ const addUser = ({id, username, room}) => {
     return {error: 'Invalid room'};
   }
 
+  if (
+    my_room.status &&
+    (my_room.status === GAME_PROGRESS || my_room === GAME_END)
+  ) {
+    console.log (username, 'attempting to join in progress game room =', room);
+    return {error: 'Game already in progress'};
+  }
+
   // Check for existing user
   const existingUser = my_room.users.find (user => {
     return user.username.toLowerCase () === username.toLowerCase ();
@@ -85,9 +95,9 @@ const addUser = ({id, username, room}) => {
       error: 'Username is in use!',
     };
   }
-  let score = 0;
+
   // Store user
-  const user = {id, username, room, score};
+  const user = {id, username, room, score: 0, active: true};
   my_room.users.push (user);
   return {user};
 };
@@ -109,11 +119,23 @@ const isUserExists = (username, room) => {
 };
 
 //
-// Get an user for the given room id and socket id
+// Get an user for the given socket id
 //
-const getUser = (room_id, user_id) => {
-  let room = getRoom (room);
-  return room.users.find (user => user.id === id);
+const getUser = id => {
+  let returnedUser = undefined;
+  let BreakException = {};
+  try {
+    rooms.forEach (room => {
+      const index = room.users.findIndex (user => user.id === id);
+      if (index !== -1) {
+        returnedUser = room.users[index];
+        throw BreakException;
+      }
+    });
+  } catch (e) {
+    if (e !== BreakException) throw e;
+    return returnedUser;
+  }
 };
 
 //
@@ -161,6 +183,7 @@ module.exports = {
   createRoom,
   removeRoom,
   addUser,
+  getUser,
   removeUser,
   removeUserFromRoom,
   getUsersInRoom,

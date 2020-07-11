@@ -177,6 +177,21 @@ describe ('Functional tests', () => {
     expect (start_response.status).toBe (GAME_START);
   });
 
+  test ('Joining as a valid user during game progress should throw error', () => {
+    let options = {
+      id: firstClientSocketId,
+      username: 'Jake',
+      room: testRoom.id,
+    };
+    handleJoin (options, callback, socket, io);
+    expect (callback).toHaveBeenCalled ();
+
+    expect (callback.mock.calls[0][0]).toBeTruthy (); //Error should be present
+    expect (callback.mock.calls[0][1]).toBeFalsy (); //Data should not be present
+
+    expect (socket.join).not.toHaveBeenCalled ();
+  });
+
   test ('Game progress message should trigger broadcast of game start to everyone in room', () => {
     let game_status_data = {
       status: GAME_PROGRESS,
@@ -225,6 +240,10 @@ describe ('Functional tests', () => {
     //
     // Verify Results
     //
+    //User should still be in the room
+    let user = gameroom.getUser (socket.id);
+    expect (user).toBeTruthy ();
+    expect (user.active).toBe (false); //User should be marked as inactive
 
     // io.to should be called with correct room
     expect (io.to).toHaveBeenCalled ();
