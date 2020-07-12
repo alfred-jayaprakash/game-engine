@@ -12,11 +12,15 @@ import {
   Table,
 } from 'reactstrap';
 import GameEngine from '../utils/GameEngine';
-import TimerPanel from '../components/TimerPanel';
 import ScorePanel from '../components/ScorePanel';
 import GamePanel from '../components/GamePanel';
 
-const {GAME_START, GAME_PROGRESS, GAME_END} = require ('../utils/GlobalConfig');
+const {
+  GAME_START,
+  GAME_PROGRESS,
+  GAME_END,
+  GAME_STOP,
+} = require ('../utils/GlobalConfig');
 
 const WAITING_STATUS = 'wait';
 const REDIRECT_TIMEOUT = 3000;
@@ -180,19 +184,16 @@ const GameScreen = props => {
       {(gameStatus === GAME_START || gameStatus === GAME_PROGRESS) &&
         <div>
           <ScorePanel score={score} />
-          <TimerPanel
-            duration={duration.current}
-            currentImage={currentImage}
-            onTimeOver={onTimeOver}
-          />
           <GamePanel
+            duration={duration.current}
             currentImage={currentImage}
             currentRef={currentRef.current}
             onAnswer={onAnswer}
+            onTimeOver={onTimeOver}
           />
         </div>}
 
-      {gameStatus === GAME_END &&
+      {(gameStatus === GAME_END || gameStatus === GAME_STOP) &&
         <div className="p-3 my-2 rounded bg-docs-transparent-grid text-dark">
           <Toast>
             <ToastHeader>

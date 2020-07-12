@@ -10,6 +10,7 @@ const STATE_EVENT = 'state';
 
 const GAME_START = 'start';
 const GAME_PROGRESS = 'run';
+const GAME_STOP = 'stop';
 const GAME_END = 'end';
 
 const MAXIMUM_USER_SIZE = 20;
@@ -25,6 +26,7 @@ module.exports = {
   STATE_EVENT,
   GAME_START,
   GAME_PROGRESS,
+  GAME_STOP,
   GAME_END,
   MAXIMUM_USER_SIZE,
   GAME_ADMIN_USER,

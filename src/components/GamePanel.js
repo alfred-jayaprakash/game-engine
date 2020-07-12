@@ -20,7 +20,7 @@ import {
   Badge,
   FormText,
 } from 'reactstrap';
-
+import TimerPanel from '../components/TimerPanel';
 import GameEngine from '../utils/GameEngine';
 
 function reducer (answers, action) {
@@ -169,6 +169,11 @@ const GamePanel = props => {
               alt="Game Image"
             />
             <CardBody>
+              <TimerPanel
+                duration={props.duration}
+                currentImage={props.currentImage}
+                onTimeOver={props.onTimeOver}
+              />
               <Form>
                 <FormGroup>
                   <Input

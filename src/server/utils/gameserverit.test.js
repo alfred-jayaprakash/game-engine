@@ -13,6 +13,7 @@ const {
   GAME_START,
   GAME_PROGRESS,
   GAME_END,
+  GAME_STOP,
 } = require ('../../utils/GlobalConfig');
 
 let httpServer;
@@ -414,7 +415,7 @@ describe ('Integration tests', () => {
     );
   });
 
-  test ('able to send a game end data', done => {
+  test ('able to end game without affecting others', done => {
     //Setup a Game room
     let newRoom = gameroom.createRoom ('Jest2');
     newRoom.gameConfig = {
@@ -422,7 +423,7 @@ describe ('Integration tests', () => {
       type: 1,
     };
 
-    let firstClientReceivedProgress, secondClientReceivedProgress = false;
+    let firstClientReceivedEnd, secondClientReceivedEnd = false;
     joinRoom (
       firstClientSocket,
       {username: 'AJ', room: newRoom.id},
@@ -458,16 +459,13 @@ describe ('Integration tests', () => {
             });
 
             firstClientSocket.on (GAME_STATUS_EVENT, data => {
-              if (data && data.scores) firstClientReceivedProgress = true;
+              if (data && data.status === GAME_END)
+                firstClientReceivedEnd = true;
             });
 
             secondClientSocket.on (GAME_STATUS_EVENT, data => {
-              if (data && data.scores) secondClientReceivedProgress = true;
-            });
-
-            firstClientSocket.emit (GAME_STATUS_EVENT, {
-              status: GAME_END,
-              room: newRoom.id,
+              if (data && data.status === GAME_END)
+                secondClientReceivedEnd = true;
             });
 
             firstClientSocket.emit (GAME_STATUS_EVENT, {
@@ -477,8 +475,78 @@ describe ('Integration tests', () => {
 
             // Use timeout to wait for socket.io server handshakes
             setTimeout (() => {
-              expect (firstClientReceivedProgress).toBeTruthy ();
-              expect (secondClientReceivedProgress).toBeTruthy ();
+              expect (firstClientReceivedEnd).toBeTruthy ();
+              expect (secondClientReceivedEnd).toBeFalsy ();
+              done ();
+            }, JEST_TIMEOUT);
+          }
+        );
+      }
+    );
+  });
+
+  test ('able to stop game for everyone', done => {
+    //Setup a Game room
+    let newRoom = gameroom.createRoom ('Jest3');
+    newRoom.gameConfig = {
+      //Dummy config
+      type: 1,
+    };
+
+    let firstClientReceivedEnd, secondClientReceivedEnd = false;
+    joinRoom (
+      firstClientSocket,
+      {username: 'AJ', room: newRoom.id},
+      (error, data) => {
+        //Now join as second client
+        joinRoom (
+          secondClientSocket,
+          {username: 'John', room: newRoom.id},
+          (error, data) => {
+            //Both clients joined
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              //Send a start event
+              status: GAME_START,
+              room: newRoom.id,
+            });
+
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_PROGRESS,
+              room: newRoom.id,
+              state: {
+                ref: 3,
+                response: 'one',
+              },
+            });
+
+            secondClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_PROGRESS,
+              room: newRoom.id,
+              state: {
+                ref: 3,
+                response: 'two',
+              },
+            });
+
+            firstClientSocket.on (GAME_STATUS_EVENT, data => {
+              if (data && data.status === GAME_STOP)
+                firstClientReceivedEnd = true;
+            });
+
+            secondClientSocket.on (GAME_STATUS_EVENT, data => {
+              if (data && data.status === GAME_STOP)
+                secondClientReceivedEnd = true;
+            });
+
+            firstClientSocket.emit (GAME_STATUS_EVENT, {
+              status: GAME_STOP,
+              room: newRoom.id,
+            });
+
+            // Use timeout to wait for socket.io server handshakes
+            setTimeout (() => {
+              expect (firstClientReceivedEnd).toBeTruthy ();
+              expect (secondClientReceivedEnd).toBeTruthy ();
               done ();
             }, JEST_TIMEOUT);
           }

@@ -17,6 +17,7 @@ const {
   GAME_END,
   GAME_ADMIN_USER,
   GAME_PROGRESS,
+  GAME_STOP,
 } = require ('../utils/GlobalConfig');
 
 const AdminGamePanel = props => {
@@ -47,12 +48,14 @@ const AdminGamePanel = props => {
 
       GameEngine.registerForGameStatus (data => {
         console.log ('Received game status change in AdminScreen', data);
-        if (data && data.status) {
-          setGameStatus (data.status);
-        }
+        if (data) {
+          if (data.status) {
+            setGameStatus (data.status);
+          }
 
-        if (data && data.scores) {
-          setGameScores (data.scores);
+          if (data.scores) {
+            setGameScores (data.scores);
+          }
         }
       });
 
@@ -68,7 +71,9 @@ const AdminGamePanel = props => {
   };
 
   const handleEnd = () => {
-    setGameStatus (GAME_END);
+    GameEngine.sendGameStatus ({room: props.room, status: GAME_STOP}, data => {
+      setGameStatus (GAME_STOP);
+    });
   };
 
   return (
@@ -88,7 +93,7 @@ const AdminGamePanel = props => {
             >
               Start Game
             </Button>}
-          {gameStatus === GAME_START &&
+          {(gameStatus === GAME_START || gameStatus === GAME_PROGRESS) &&
             <Button
               color="danger"
               className="btn-lg btn-block"
@@ -105,7 +110,9 @@ const AdminGamePanel = props => {
               {gameStatus === WAITING_STATUS &&
                 <div>Waiting for other players to join ...</div>}
               {gameStatus === GAME_START && <div>Game started</div>}
-              {gameStatus === GAME_END && <div>Game ended</div>}
+              {gameStatus === GAME_PROGRESS && <div>Game in progress</div>}
+              {(gameStatus === GAME_END || gameStatus === GAME_STOP) &&
+                <div>Game ended</div>}
             </ToastHeader>
             <ToastBody>
               <Table>
@@ -128,6 +135,7 @@ const AdminGamePanel = props => {
 
                   {(gameStatus === GAME_START ||
                     gameStatus === GAME_PROGRESS ||
+                    gameStatus === GAME_STOP ||
                     gameStatus === GAME_END) &&
                     gameScores.map (({user, score}) => (
                       <tr key={user}>

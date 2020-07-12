@@ -11,6 +11,7 @@ const {
   GAME_END,
   MAXIMUM_USER_SIZE,
   GAME_ADMIN_USER,
+  GAME_STOP,
 } = require ('../../utils/GlobalConfig');
 
 //
@@ -67,8 +68,9 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
   );
   let {room: roomId, status} = client_game_state_data;
   let current_room = gameroom.getRoom (parseInt (roomId));
-  if (current_room === null || current_room.users === null) return; //Invalid state
+  if (!current_room || !current_room.users) return; //Invalid state
   let current_user = current_room.users.find (user => user.id === socket.id);
+  if (!current_user) return; //Invalid state
   current_user.active = true; //Since current user is send data, let's set him active
   const game_state_data = {
     status,
@@ -91,12 +93,24 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
       case GAME_PROGRESS:
         game_engine_response = gameengine.handleGameProgress (game_state_data);
         break;
-      default:
+      case GAME_STOP:
         game_engine_response = gameengine.handleGameEnd (game_state_data);
         //Now set the current room to Game ended
-        current_room.status = GAME_END;
+        current_room.status = GAME_STOP;
+        game_engine_response.status = GAME_STOP;
         break;
+      case GAME_END:
+        game_engine_response = gameengine.handleGameEnd (game_state_data);
+        socket.emit (GAME_STATUS_EVENT, game_engine_response);
+        if (callback) {
+          return callback ();
+        } else {
+          return;
+        }
+      default:
+      //Error handling
     }
+
     //
     // If there is any update data sent to specific set of users
     //
@@ -108,27 +122,33 @@ const handleGameStatus = (client_game_state_data, callback, socket, io) => {
     }
 
     //
-    // Now copy the latest scores to update everyone
+    // Now copy the latest results to update everyone only if the
+    // game is in progress or the game has ended
     //
-    let scores = [];
-    let roomUsers = gameroom.getUsersInRoom (parseInt (roomId), true); //Sort users by scores descending
-    //Trim the size of array we send back to clients
-    if (roomUsers.length > MAXIMUM_USER_SIZE)
-      roomUsers = roomUsers.slice (0, MAXIMUM_USER_SIZE);
-    roomUsers.forEach (user => {
-      if (user.username !== GAME_ADMIN_USER) {
-        scores.push ({
-          user: user.username,
-          score: user.score,
-        });
-      }
-    });
+    if (
+      current_room.status === GAME_PROGRESS ||
+      current_room.status === GAME_STOP
+    ) {
+      let scores = [];
+      let roomUsers = gameroom.getUsersInRoom (parseInt (roomId), true); //Sort users by scores descending
+      //Trim the size of array we send back to clients
+      if (roomUsers.length > MAXIMUM_USER_SIZE)
+        roomUsers = roomUsers.slice (0, MAXIMUM_USER_SIZE);
+      roomUsers.forEach (user => {
+        if (user.username !== GAME_ADMIN_USER) {
+          scores.push ({
+            user: user.username,
+            score: user.score,
+          });
+        }
+      });
+      client_response.scores = scores; //Finally write the scores
+      console.log ('Sending response to all clients ', client_response);
 
-    client_response.scores = scores; //Finally write the scores
-    console.log ('Sending response to all clients ', client_response);
-
-    io.to (roomId).emit (GAME_STATUS_EVENT, client_response); //Send update game status to everyone
+      io.to (roomId).emit (GAME_STATUS_EVENT, client_response); //Send update game status to everyone
+    }
   }
+  if (callback) return callback ();
 };
 
 //

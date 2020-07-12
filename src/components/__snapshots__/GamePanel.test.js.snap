@@ -40,6 +40,9 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
         <CardBody
           tag="div"
         >
+          <TimerPanel
+            currentImage="./1.jpg"
+          />
           <Form
             tag="form"
           >

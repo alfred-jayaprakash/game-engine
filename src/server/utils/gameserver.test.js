@@ -14,6 +14,7 @@ const {
   GAME_START,
   GAME_PROGRESS,
   GAME_END,
+  GAME_STOP,
 } = require ('../../utils/GlobalConfig');
 
 let gameroom;
@@ -44,6 +45,7 @@ describe ('Functional tests', () => {
 
     // Socket.IO mocks
     socket.on = jest.fn ();
+    socket.emit = jest.fn ();
     socket.join = jest
       .fn ()
       .mockImplementation ((room, callback) => callback ());
@@ -213,9 +215,21 @@ describe ('Functional tests', () => {
     expect (roomSocketRef.emit.mock.calls[0][1]).toBeTruthy ();
   });
 
-  test ('Game end status message should trigger broadcast of game end to everyone in room', () => {
+  test ('Game end status message should be returned back to caller', () => {
     let game_status_data = {
       status: GAME_END,
+      room: testRoom.id,
+    };
+    handleGameStatus (game_status_data, callback, socket, io);
+
+    expect (socket.emit).toHaveBeenCalled (); //Socket emit to be called
+
+    expect (io.to).not.toHaveBeenCalled (); //No broadcast should happen
+  });
+
+  test ('Game stop status message should trigger broadcast of game end to everyone in room', () => {
+    let game_status_data = {
+      status: GAME_STOP,
       room: testRoom.id,
     };
     handleGameStatus (game_status_data, callback, socket, io);
