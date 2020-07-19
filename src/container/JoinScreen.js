@@ -162,6 +162,7 @@ const JoinScreen = props => {
                 <Col>
                   <FormGroup>
                     <Button
+                      id="joinbtn"
                       color="info"
                       onClick={onSubmit}
                       className="btn-lg btn-block"
@@ -210,6 +211,7 @@ const JoinScreen = props => {
                 <Col>
                   <FormGroup>
                     <Button
+                      id="hostbtn"
                       color="info"
                       onClick={onLogin}
                       className="btn-lg btn-block"

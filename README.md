@@ -1,4 +1,10 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Game Center project aims at bringing social games that can be played in virtual gatherings. Get the latest source code from GitHub project directory
+
+## Setup
+The following environment variables need to be set up before running the server
+
+- REACT_APP_SERVER_URL - Set it to the URL of the server that you are accessing from
+- UNSPLASH_API_ACCESS_KEY - Set it to the API Access Key obtained from your Unsplash account. For details please visit https://unsplash.com/developers
 
 ## Available Scripts
 
@@ -10,7 +16,7 @@ Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+You will also see any lint errors in the console. 
 
 ### `npm test`
 
