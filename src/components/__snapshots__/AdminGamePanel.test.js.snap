@@ -61,6 +61,7 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
       <Button
         className="btn-lg btn-block"
         color="success"
+        id="startbtn"
         onClick={[Function]}
         tag="button"
       >
