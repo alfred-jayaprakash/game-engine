@@ -119,6 +119,7 @@ const AdminScreen = props => {
             <Col>
               <FormGroup>
                 <Button
+                  id="createbtn"
                   color="info"
                   className="btn-lg btn-block"
                   onClick={onCreateRoom}

@@ -87,6 +87,7 @@ const AdminGamePanel = props => {
         <Col>
           {gameStatus === WAITING_STATUS &&
             <Button
+              id="startbtn"
               color="success"
               className="btn-lg btn-block"
               onClick={handleStart}
@@ -95,6 +96,7 @@ const AdminGamePanel = props => {
             </Button>}
           {(gameStatus === GAME_START || gameStatus === GAME_PROGRESS) &&
             <Button
+              id="stopbtn"
               color="danger"
               className="btn-lg btn-block"
               onClick={handleEnd}
