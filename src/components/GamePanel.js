@@ -196,6 +196,7 @@ const GamePanel = props => {
                 </FormGroup>
                 <FormGroup>
                   <Button
+                    id="guessBtn"
                     type="button"
                     color="info"
                     className="btn-lg btn-block"
@@ -215,9 +216,11 @@ const GamePanel = props => {
             {answers.map (({answer, count}) => (
               <ListGroupItem key={answer} className="bg-light text-dark p-2">
                 <div className="d-flex bd-highlight">
-                  <div className="p-2 flex-grow-1 bd-highlight">{answer}</div>
+                  <div id="guess" className="p-2 flex-grow-1 bd-highlight">
+                    {answer}
+                  </div>
                   <div className="p-2 bd-highlight">
-                    <Badge color={count > 1 ? 'info' : 'secondary'}>
+                    <Badge id="hit" color={count > 1 ? 'info' : 'secondary'}>
                       {count}
                     </Badge>
                   </div>

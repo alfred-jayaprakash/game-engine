@@ -174,7 +174,7 @@ const GameScreen = props => {
               >
                 Waiting ...
               </ToastHeader>
-              <ToastBody className="text-dark">
+              <ToastBody id="waitMsg" className="text-dark">
                 Please wait for other players to join
               </ToastBody>
             </Toast>

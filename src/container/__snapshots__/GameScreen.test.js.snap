@@ -76,6 +76,7 @@ exports[`Snapshot tests should render correctly without issues 1`] = `
         </ToastHeader>
         <ToastBody
           className="text-dark"
+          id="waitMsg"
           tag="div"
         >
           Please wait for other players to join
